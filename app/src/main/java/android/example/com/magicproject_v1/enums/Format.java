@@ -1,4 +1,4 @@
-package android.example.com.magicproject_v1;
+package android.example.com.magicproject_v1.enums;
 
 public enum Format {
     LEGACY("Legacy", 3),

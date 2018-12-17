@@ -1,4 +1,6 @@
-package android.example.com.magicproject_v1;
+package android.example.com.magicproject_v1.classes;
+
+import android.example.com.magicproject_v1.enums.Format;
 
 import java.util.ArrayList;
 

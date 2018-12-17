@@ -1,44 +1,24 @@
-package android.example.com.magicproject_v1;
+package android.example.com.magicproject_v1.classes;
+
+import android.example.com.magicproject_v1.enums.ManaType;
+
+import java.util.Objects;
 
 public class Mana implements Comparable<Mana> {
 
     private int red, green, blue, white, black, colorless;
 
-    public Mana() {
-        red = 0;
-        green= 0;
-        blue = 0;
-        white = 0;
-        black = 0;
-        colorless = 0;
-    }
-
     public Mana(final int red, final int green, final int blue, final int white, final int black, final int colorless){
-        this.red = notNegative(red, "Red");
-        this.green = notNegative(green, "Green");
-        this.blue = notNegative(blue, "Blue");
-        this.white = notNegative(white, "White");
-        this.black = notNegative(black, "Black");
-        this.colorless = notNegative(colorless, "Colorless");
-    }
-
-    public Mana(final int value, final ManaType manaType){
-        switch (manaType){
-            case RED: this.red = notNegative(value, "Red");
-                break;
-            case GREEN: this.green = notNegative(value, "Green");
-                break;
-            case BLUE: this.blue = notNegative(value, "Blue");
-                break;
-            case WHITE: this.white = notNegative(value, "White");
-                break;
-            case BLACK: this.black = notNegative(value, "Black");
-                break;
-            case COLORLESS: this.colorless = notNegative(value, "Colorless");
-        }
+        this.red = notNegative(red);
+        this.green = notNegative(green);
+        this.blue = notNegative(blue);
+        this.white = notNegative(white);
+        this.black = notNegative(black);
+        this.colorless = notNegative(colorless);
     }
 
     public Mana(final Mana mana) {
+        Objects.requireNonNull(mana);
         this.red = mana.getRed();
         this.green = mana.getGreen();
         this.blue = mana.getBlue();
@@ -48,27 +28,27 @@ public class Mana implements Comparable<Mana> {
     }
 
     public static Mana RedMana(int value){
-        return new Mana(value, 0, 0, 0, 0, 0);
+        return new Mana(notNegative(value), 0, 0, 0, 0, 0);
     }
 
     public static Mana GreenMana(int value){
-        return new Mana(0, value, 0, 0, 0, 0);
+        return new Mana(0, notNegative(value), 0, 0, 0, 0);
     }
 
     public static Mana BlueMana(int value){
-        return new Mana(0, 0, value, 0, 0, 0);
+        return new Mana(0, 0, notNegative(value), 0, 0, 0);
     }
 
     public static Mana WhiteMana(int value){
-        return new Mana(0, 0, 0, value, 0, 0);
+        return new Mana(0, 0, 0, notNegative(value), 0, 0);
     }
 
     public static Mana BlackMana(int value){
-        return new Mana(0, 0, 0, 0, value, 0);
+        return new Mana(0, 0, 0, 0, notNegative(value), 0);
     }
 
     public static Mana ColorlessMana(int value){
-        return new Mana(0, 0, 0, 0, 0, value);
+        return new Mana(0, 0, 0, 0, 0, notNegative(value));
     }
 
     public void add(final Mana mana){
@@ -78,30 +58,6 @@ public class Mana implements Comparable<Mana> {
         this.white += mana.getWhite();
         this.black += mana.getBlack();
         this.colorless += mana.getColorless();
-    }
-
-    public void increaseRed(){
-        this.red++;
-    }
-
-    public void increaseGreen(){
-        this.green++;
-    }
-
-    public void increaseBlue(){
-        this.blue++;
-    }
-
-    public void increaseWhite(){
-        this.white++;
-    }
-
-    public void increaseBlack(){
-        this.black++;
-    }
-
-    public void increaseColorless(){
-        this.colorless++;
     }
 
     public int get(final ManaType manaType){
@@ -130,15 +86,6 @@ public class Mana implements Comparable<Mana> {
                 break;
             case COLORLESS: this.colorless = value;
         }
-    }
-
-    public void subtract(final Mana mana){
-        this.red -= mana.getRed();
-        this.green -= mana.getGreen();
-        this.blue -= mana.getBlue();
-        this.white -= mana.getWhite();
-        this.black -= mana.getBlack();
-        this.colorless -= mana.getColorless();
     }
 
     public boolean contains(final ManaType manaType){
@@ -182,7 +129,7 @@ public class Mana implements Comparable<Mana> {
     }
 
     public void setRed(int red) {
-        this.red = notNegative(red, "Red");
+        this.red = notNegative(red);
     }
 
     public int getGreen() {
@@ -190,7 +137,7 @@ public class Mana implements Comparable<Mana> {
     }
 
     public void setGreen(int green) {
-        this.green = notNegative(green, "Green");
+        this.green = notNegative(green);
     }
 
     public int getBlue() {
@@ -198,7 +145,7 @@ public class Mana implements Comparable<Mana> {
     }
 
     public void setBlue(int blue) {
-        this.blue = notNegative(blue, "Blue");
+        this.blue = notNegative(blue);
     }
 
     public int getWhite() {
@@ -206,7 +153,7 @@ public class Mana implements Comparable<Mana> {
     }
 
     public void setWhite(int white) {
-        this.white = notNegative(white, "White");;
+        this.white = notNegative(white);;
     }
 
     public int getBlack() {
@@ -214,7 +161,7 @@ public class Mana implements Comparable<Mana> {
     }
 
     public void setBlack(int black) {
-        this.black = notNegative(black, "Black");;
+        this.black = notNegative(black);;
     }
 
     public int getColorless() {
@@ -222,10 +169,10 @@ public class Mana implements Comparable<Mana> {
     }
 
     public void setColorless(int colorless) {
-        this.colorless = notNegative(colorless, "Colorless");
+        this.colorless = notNegative(colorless);
     }
 
-    private static int notNegative(int value, final String name){
+    private static int notNegative(int value){
         if (value < 0){
             value = 0;
         }

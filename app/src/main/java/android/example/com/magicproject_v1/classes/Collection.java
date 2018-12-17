@@ -1,12 +1,17 @@
-package android.example.com.magicproject_v1;
+package android.example.com.magicproject_v1.classes;
+
+import android.example.com.magicproject_v1.enums.ManaType;
+import android.example.com.magicproject_v1.enums.Rarity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Collection {
 
     private final static HashMap<Card, Integer> CARDS = new HashMap<>();
 
     public void add(Card pCard){
+        Objects.requireNonNull(pCard);
         if(CARDS.containsKey(pCard)){
             CARDS.put(pCard, CARDS.get(pCard) + 1);
         }else {
@@ -15,6 +20,7 @@ public class Collection {
     }
 
     public void add(Card pCard, int count){
+        Objects.requireNonNull(pCard);
         if(CARDS.containsKey(pCard)){
             CARDS.put(pCard, CARDS.get(pCard) + count);
         }else {
