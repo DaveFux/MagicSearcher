@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MagicProject</string>
+    <string name="addText">Add Card</string>
+    <string name="helpText">Help</string>
+    <string name="hint">Enter Card Name</string>
+
+</resources>

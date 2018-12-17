@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/my_cards"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="My Cards"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/deck"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="Deck"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/about_us"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="About us"
+        app:showAsAction="ifRoom"
+        />
+
+
+</menu>
