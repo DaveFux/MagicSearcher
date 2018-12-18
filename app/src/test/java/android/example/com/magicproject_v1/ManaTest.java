@@ -1,7 +1,7 @@
 package android.example.com.magicproject_v1;
 
 import android.example.com.magicproject_v1.classes.Mana;
-import org.junit.BeforeClass;
+import android.example.com.magicproject_v1.enums.ManaType;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -77,13 +77,12 @@ public class ManaTest {
         Mana mana = new Mana(0, 0, 1, 0, 0, 5);
         Mana manaClone = new Mana(mana);
 
-        assertEquals(mana, manaClone);
+        assertEquals(0, mana.compareTo(manaClone));
     }
 
     @Test(expected = NullPointerException.class)
     public void manaCloneConstructor_doesNotAcceptNullValues() {
-        Mana mana = null;
-        Mana manaClone = new Mana(mana);
+        new Mana(null);
     }
 
     @Test
@@ -105,11 +104,47 @@ public class ManaTest {
     public void manaGet_isCorrect() {
         Mana mana = new Mana(1, 2, 3, 4, 5, 6);
 
-        assertEquals(1, mana.getRed());
+        assertEquals(1, mana.get(ManaType.RED));
+        assertEquals(2, mana.get(ManaType.GREEN));
+        assertEquals(3, mana.get(ManaType.BLUE));
+        assertEquals(4, mana.get(ManaType.WHITE));
+        assertEquals(5, mana.get(ManaType.BLACK));
+        assertEquals(6, mana.get(ManaType.COLORLESS));
+    }
+
+    @Test
+    public void manaSet_isCorrect() {
+        Mana mana = new Mana(1, 2, 3, 4, 5, 6);
+
+        mana.set(ManaType.BLACK, 2);
+        mana.set(ManaType.BLUE, 2);
+        mana.set(ManaType.RED, 5);
+
+        assertEquals(5, mana.getRed());
         assertEquals(2, mana.getGreen());
-        assertEquals(3, mana.getBlue());
+        assertEquals(2, mana.getBlue());
         assertEquals(4, mana.getWhite());
-        assertEquals(5, mana.getBlack());
+        assertEquals(2, mana.getBlack());
         assertEquals(6, mana.getColorless());
     }
+
+    @Test
+    public void manaContains_isCorrect() {
+        Mana mana = new Mana(1, 0, 0, 4, 5, 6);
+
+        assertTrue(mana.contains(ManaType.BLACK));
+        assertTrue(mana.contains(ManaType.RED));
+        assertTrue(mana.contains(ManaType.WHITE));
+        assertTrue(mana.contains(ManaType.COLORLESS));
+        assertFalse(mana.contains(ManaType.GREEN));
+        assertFalse(mana.contains(ManaType.BLUE));
+    }
+
+    @Test
+    public void manaConvertedManaCost_isCorrect() {
+        Mana mana = new Mana(1, 0, 0, 4, 5, 6);
+
+        assertEquals(16, mana.convertedManaCost());
+    }
+
 }

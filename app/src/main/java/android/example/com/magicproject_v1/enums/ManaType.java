@@ -9,12 +9,26 @@ public enum ManaType {
     BLACK("Black", "B",Color.BLACK),
     GREEN("Green", "G",Color.GREEN),
     COLORLESS("Colorless","C",Color.GRAY);
+
     private final String text;
     private final String abv;
     private final int color;
+
     ManaType(String text, String abv, int color) {
         this.text=text;
         this.abv=abv;
         this.color=color;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getAbv() {
+        return abv;
+    }
+
+    public int getColor() {
+        return color;
     }
 }

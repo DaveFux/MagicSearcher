@@ -1,6 +1,7 @@
 package android.example.com.magicproject_v1.classes;
 
 import android.example.com.magicproject_v1.enums.ManaType;
+import android.support.annotation.NonNull;
 
 import java.util.Objects;
 
@@ -89,38 +90,20 @@ public class Mana implements Comparable<Mana> {
     }
 
     public boolean contains(final ManaType manaType){
-        if(manaType.toString().equals("Red") && this.red > 0) return true;
-        if(manaType.toString().equals("Green") && this.green > 0) return true;
-        if(manaType.toString().equals("Blue") && this.blue > 0) return true;
-        if(manaType.toString().equals("White") && this.white > 0) return true;
-        if(manaType.toString().equals("Black") && this.black > 0) return true;
-        return manaType.toString().equals("Colorless") && this.colorless > 0;
-    }
-
-    public boolean contains(final Mana mana){
-        return this.red >= mana.getRed() && this.green >= mana.getGreen() && this.blue >= mana.getBlue() &&
-                this.white >= mana.getWhite() && this.black >= mana.getBlack() && this.colorless >= mana.getColorless();
+        if(manaType.getText().equals("Red") && this.red > 0) return true;
+        if(manaType.getText().equals("Green") && this.green > 0) return true;
+        if(manaType.getText().equals("Blue") && this.blue > 0) return true;
+        if(manaType.getText().equals("White") && this.white > 0) return true;
+        if(manaType.getText().equals("Black") && this.black > 0) return true;
+        return manaType.getText().equals("Colorless") && this.colorless > 0;
     }
 
     public int convertedManaCost(){
         return this.red + this.green + this.blue + this.white + this.black + this.colorless;
     }
 
-    public int convertedColoredManaCost(){
-        return this.red + this.green + this.blue + this.white + this.black;
-    }
-
-    public void clear(){
-        this.red = 0;
-        this.green = 0;
-        this.blue = 0;
-        this.white = 0;
-        this.black = 0;
-        this.colorless = 0;
-    }
-
     @Override
-    public int compareTo(Mana otherMana) {
+    public int compareTo(@NonNull Mana otherMana) {
         return this.convertedManaCost() - otherMana.convertedManaCost();
     }
 
@@ -128,48 +111,24 @@ public class Mana implements Comparable<Mana> {
         return red;
     }
 
-    public void setRed(int red) {
-        this.red = notNegative(red);
-    }
-
     public int getGreen() {
         return green;
-    }
-
-    public void setGreen(int green) {
-        this.green = notNegative(green);
     }
 
     public int getBlue() {
         return blue;
     }
 
-    public void setBlue(int blue) {
-        this.blue = notNegative(blue);
-    }
-
     public int getWhite() {
         return white;
-    }
-
-    public void setWhite(int white) {
-        this.white = notNegative(white);;
     }
 
     public int getBlack() {
         return black;
     }
 
-    public void setBlack(int black) {
-        this.black = notNegative(black);;
-    }
-
     public int getColorless() {
         return colorless;
-    }
-
-    public void setColorless(int colorless) {
-        this.colorless = notNegative(colorless);
     }
 
     private static int notNegative(int value){
