@@ -10,6 +10,9 @@ public class Collection {
 
     private final static HashMap<Card, Integer> CARDS = new HashMap<>();
 
+    private String name;
+
+
     public void add(Card pCard){
         Objects.requireNonNull(pCard);
         if(CARDS.containsKey(pCard)){
