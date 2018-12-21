@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected ArrayAdapter<String> itemsAdapter;
     protected ListView cardListView;
     protected EditText searchBar;
+    protected CardDB mDb;
     protected TextWatcher searchWatcher = new TextWatcher() {
 
         public void afterTextChanged(Editable s) {
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
     protected void init() {
         mContext = this;
+        mDb=new CardDB(mContext);
+
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
         cardListView = findViewById(R.id.cardList);

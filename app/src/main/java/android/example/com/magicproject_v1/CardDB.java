@@ -1,11 +1,15 @@
 package android.example.com.magicproject_v1;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.example.com.magicproject_v1.classes.Card;
 import android.util.Log;
 
 import java.util.Objects;
+
+import static android.example.com.magicproject_v1.ExampleDB.TABLE_MESSAGES;
 
 public class CardDB extends SQLiteOpenHelper {
 
@@ -78,6 +82,31 @@ public class CardDB extends SQLiteOpenHelper {
                 TABLE_CARDS, COL_ID, COL_NOME, COL_TYPE, COL_MANACOST, COL_FLAVORTEXT,
                 COL_ORACLETEXT, COL_EXPANSIONNAME, COL_RARITY, COL_POWER, COL_TOUGHNESS);
         return strRet;
+    }
+
+    public long addMessage (
+            Card card
+    ){
+        SQLiteDatabase objectThatWillAllowMeToWriteToTheDatabase =
+                this.getWritableDatabase();
+
+        if (objectThatWillAllowMeToWriteToTheDatabase!=null)
+        {
+            ContentValues cv = new ContentValues();
+            cv.put(COL_NOME, card.getName());
+
+
+            long iWhereInsertedOrMinus1OnFailure =
+                    objectThatWillAllowMeToWriteToTheDatabase.insert(
+                            TABLE_CARDS,
+                            null, //don't want to provide the name of a null column
+                            cv
+                    );
+            objectThatWillAllowMeToWriteToTheDatabase.close();
+            return iWhereInsertedOrMinus1OnFailure;
+        }//if
+        //return -2;
+        return -2;
     }
 
     private String statementForTableCardsDestruction(){
