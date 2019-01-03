@@ -1,6 +1,11 @@
 package android.example.com.magicproject_v1;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.classes.Mana;
+import android.example.com.magicproject_v1.enums.Rarity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -18,6 +23,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -32,21 +42,20 @@ public class MainActivity extends AppCompatActivity {
     protected CardDB mDb;
     protected TextWatcher searchWatcher = new TextWatcher() {
 
-        public void afterTextChanged(Editable s) {
-
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // ? Aqui nao acontece nada, por enquanto
+            //Exemplos para esta funcao: Nao sei, esta merda e inutil pra crlho\\
         }
 
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        @Override
+        public void afterTextChanged(Editable s) {
+            // ? Aqui nao acontece nada, por enquanto
+            //Exemplos para esta funcao: Fazer um historico de procuras
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            List<String> result = new ArrayList<>();
-            for (String card : cardListArray) {
-                if (card.contains(searchBar.getText())) {
-                    result.add(card);
-                }
-            }
+            ArrayList<String> result = mDb.retrieveAll(searchBar.getText().toString());
             ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
             cardListView.setAdapter(itemsAdapter);
         }
@@ -79,14 +88,37 @@ public class MainActivity extends AppCompatActivity {
     protected void init() {
         mContext = this;
         mDb=new CardDB(mContext);
-
+        mDb.clear();
+        Card carta = new Card("Bela carta", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
+        Card carta2 = new Card("asd", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
+        Card carta3 = new Card("1233", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
+        Card carta4 = new Card("sgdfgs", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
+        Card carta5 = new Card("banana", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
+        mDb.addCard(carta);
+        mDb.addCard(carta2);
+        mDb.addCard(carta3);
+        mDb.addCard(carta4);
+        mDb.addCard(carta5);
+        ArrayList<String> results = mDb.retrieveAll();
+        cardListArray.addAll(results);
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
         cardListView = findViewById(R.id.cardList);
         cardListArray.add("A");
-        itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, cardListArray);
+        itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, cardListArray); // pls no mexer
         cardListView.setAdapter(itemsAdapter);
         cardListView.setOnItemLongClickListener(editCard);
+
+        File file = new File("C:\\Users\\Anabela\\AndroidStudioProjects\\MagicSearcher\\app\\src\\main\\res\\cards.json");
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            JSONParser jp = new JSONParser();
+            System.out.println(jp.readJsonStream(fileInputStream));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         BottomNavigationView bNavView = findViewById(R.id.bottom_navigation);
         bNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

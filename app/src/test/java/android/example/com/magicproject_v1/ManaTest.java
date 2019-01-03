@@ -82,7 +82,8 @@ public class ManaTest {
 
     @Test(expected = NullPointerException.class)
     public void manaCloneConstructor_doesNotAcceptNullValues() {
-        new Mana(null);
+        Mana mana = null;
+        new Mana(mana);
     }
 
     @Test

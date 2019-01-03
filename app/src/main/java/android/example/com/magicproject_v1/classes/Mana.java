@@ -9,6 +9,8 @@ public class Mana implements Comparable<Mana> {
 
     private int red, green, blue, white, black, colorless;
 
+    public Mana() { }
+
     public Mana(final int red, final int green, final int blue, final int white, final int black, final int colorless){
         this.red = notNegative(red);
         this.green = notNegative(green);
@@ -26,6 +28,10 @@ public class Mana implements Comparable<Mana> {
         this.white = mana.getWhite();
         this.black = mana.getBlack();
         this.colorless = mana.getColorless();
+    }
+
+    public Mana(String strManaCost) {
+
     }
 
     public static Mana RedMana(int value){

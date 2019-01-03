@@ -2,11 +2,13 @@ package android.example.com.magicproject_v1;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.example.com.magicproject_v1.classes.Card;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static android.example.com.magicproject_v1.ExampleDB.TABLE_MESSAGES;
@@ -72,41 +74,75 @@ public class CardDB extends SQLiteOpenHelper {
         }
     }
 
+    public long addCard (Card card){
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw!=null) {
+            ContentValues cv = new ContentValues();
+            cv.put(COL_NOME, card.getName());
+            cv.put(COL_TYPE, card.getToughness());
+            cv.put(COL_MANACOST, card.getManaCost().toString());
+            cv.put(COL_FLAVORTEXT, card.getFlavorText());
+            cv.put(COL_ORACLETEXT, card.getOracleText());
+            cv.put(COL_EXPANSIONNAME, card.getExpansionName());
+            cv.put(COL_RARITY, card.getRarity().toString());
+            cv.put(COL_POWER, card.getPower());
+            cv.put(COL_TOUGHNESS, card.getToughness());
+
+            long id = dbw.insert(TABLE_CARDS, null, cv);
+            dbw.close();
+            return id;
+        }
+        return -2;
+    }
+
+    public ArrayList<String> retrieveAll(){
+        return retrieveAll("", "");
+    }
+
+    public ArrayList<String> retrieveAll(String filter){
+        return retrieveAll(COL_NOME, filter);
+    }
+
+    public ArrayList<String> retrieveAll(String columnName, String filter){
+        ArrayList<String> retorno = new ArrayList<>();
+        SQLiteDatabase dbr = this.getReadableDatabase();
+        if (dbr!=null) {
+            String query = "select * from " + TABLE_CARDS;
+            if(!columnName.equals("")) {
+                query += " where " + columnName + " like '%" + filter + "%'";
+            }
+            Cursor cursor = dbr.rawQuery(query, null);
+            if(cursor.moveToFirst()){
+                while(!cursor.isAfterLast()) {
+                    retorno.add(cursor.getString(1));
+                    cursor.moveToNext();
+                }
+            }
+            dbr.close();
+        }
+        return retorno;
+    }
+
+    public int count(String tableName){
+        return retrieveAll().size();
+    }
+
+    public void clear(){
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        uninstallDB(dbw);
+        installDB(dbw);
+    }
+
     private String statementForTableCardsCreation(){
         String strRet;
 
         strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
-                "(%s INTEGER NOT NULL AUTOINCREMENT , %s TEXT NOT NULL," +
-                " %s TEXT NOT NULL, %s TEXT, %s TEXT, %s TEXT," +
-                " %s TEXT NOT NULL, %s TEXT NOT NULL, %s INTEGER, %s INTEGER)",
+                        "(%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , %s TEXT NOT NULL," +
+                        " %s TEXT NOT NULL, %s TEXT, %s TEXT, %s TEXT," +
+                        " %s TEXT NOT NULL, %s TEXT NOT NULL, %s INTEGER, %s INTEGER)",
                 TABLE_CARDS, COL_ID, COL_NOME, COL_TYPE, COL_MANACOST, COL_FLAVORTEXT,
                 COL_ORACLETEXT, COL_EXPANSIONNAME, COL_RARITY, COL_POWER, COL_TOUGHNESS);
         return strRet;
-    }
-
-    public long addMessage (
-            Card card
-    ){
-        SQLiteDatabase objectThatWillAllowMeToWriteToTheDatabase =
-                this.getWritableDatabase();
-
-        if (objectThatWillAllowMeToWriteToTheDatabase!=null)
-        {
-            ContentValues cv = new ContentValues();
-            cv.put(COL_NOME, card.getName());
-
-
-            long iWhereInsertedOrMinus1OnFailure =
-                    objectThatWillAllowMeToWriteToTheDatabase.insert(
-                            TABLE_CARDS,
-                            null, //don't want to provide the name of a null column
-                            cv
-                    );
-            objectThatWillAllowMeToWriteToTheDatabase.close();
-            return iWhereInsertedOrMinus1OnFailure;
-        }//if
-        //return -2;
-        return -2;
     }
 
     private String statementForTableCardsDestruction(){
