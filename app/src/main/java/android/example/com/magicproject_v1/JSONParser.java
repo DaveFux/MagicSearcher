@@ -53,6 +53,7 @@ public class JSONParser {
                     flavorText = reader.nextString();
                 } else if (field.equals("legalities")) {
                     //TODO:
+                    reader.skipValue();
                 } else if (field.equals("rarity")) {
                     switch (reader.nextString()){
                         case "uncommon":

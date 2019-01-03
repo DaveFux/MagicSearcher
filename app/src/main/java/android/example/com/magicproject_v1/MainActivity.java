@@ -1,11 +1,9 @@
 package android.example.com.magicproject_v1;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Mana;
 import android.example.com.magicproject_v1.enums.Rarity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -23,15 +21,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLOutput;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class MainActivity extends AppCompatActivity {
     protected Context mContext;
@@ -89,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
         mDb=new CardDB(mContext);
         mDb.clear();
-        Card carta = new Card("Bela carta", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
+        /*Card carta = new Card("Bela carta", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
         Card carta2 = new Card("asd", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
         Card carta3 = new Card("1233", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
         Card carta4 = new Card("sgdfgs", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
@@ -99,7 +93,24 @@ public class MainActivity extends AppCompatActivity {
         mDb.addCard(carta3);
         mDb.addCard(carta4);
         mDb.addCard(carta5);
-        ArrayList<String> results = mDb.retrieveAll();
+        ArrayList<String> results = mDb.retrieveAll();*/
+
+        List<Card> jsonResults = new ArrayList<>();
+        List<String> results = new ArrayList<>();
+
+        try {
+            InputStream json = mContext.getAssets().open("cards.json");
+            int size = json.available();
+            JSONParser jp = new JSONParser();
+            jsonResults.addAll(jp.readJsonStream(json));
+            for (Card cardjson : jsonResults) {
+                results.add(cardjson.getName());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         cardListArray.addAll(results);
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
@@ -109,16 +120,8 @@ public class MainActivity extends AppCompatActivity {
         cardListView.setAdapter(itemsAdapter);
         cardListView.setOnItemLongClickListener(editCard);
 
-        File file = new File("C:\\Users\\Anabela\\AndroidStudioProjects\\MagicSearcher\\app\\src\\main\\res\\cards.json");
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            JSONParser jp = new JSONParser();
-            System.out.println(jp.readJsonStream(fileInputStream));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
 
         BottomNavigationView bNavView = findViewById(R.id.bottom_navigation);
         bNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
