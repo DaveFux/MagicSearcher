@@ -11,8 +11,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static android.example.com.magicproject_v1.ExampleDB.TABLE_MESSAGES;
-
 public class CardDB extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "CARDS.BD";
@@ -93,6 +91,21 @@ public class CardDB extends SQLiteOpenHelper {
             return id;
         }
         return -2;
+    }
+
+    public long addCardToDeck (String deckName, Card card, int quantity){
+        //TODO:
+        return -2;
+    }
+
+    public long removeCardFromDeck (String deckName, Card card, int quantity){
+        //TODO:
+        return -2;
+    }
+
+    public ArrayList<String> retrieveAllFromDeck (String deckName){
+        //TODO:
+        return null;
     }
 
     public ArrayList<String> retrieveAll(){

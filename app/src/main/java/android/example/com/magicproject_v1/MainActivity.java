@@ -120,9 +120,6 @@ public class MainActivity extends AppCompatActivity {
         cardListView.setAdapter(itemsAdapter);
         cardListView.setOnItemLongClickListener(editCard);
 
-
-
-
         BottomNavigationView bNavView = findViewById(R.id.bottom_navigation);
         bNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -147,9 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
     @Override
