@@ -1,36 +1,37 @@
 package android.example.com.magicproject_v1;
 
-import android.content.Context;
-import android.content.Intent;
-import android.example.com.magicproject_v1.classes.Card;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Toast;
+        import android.content.Context;
+        import android.content.Intent;
+        import android.example.com.magicproject_v1.classes.Card;
+        import android.support.annotation.NonNull;
+        import android.support.design.widget.BottomNavigationView;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.text.Editable;
+        import android.text.TextWatcher;
+        import android.view.Menu;
+        import android.view.MenuInflater;
+        import android.view.MenuItem;
+        import android.view.View;
+        import android.widget.AdapterView;
+        import android.widget.ArrayAdapter;
+        import android.widget.EditText;
+        import android.widget.ListView;
+        import android.widget.SearchView;
+        import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+        import java.io.FileNotFoundException;
+        import java.io.IOException;
+        import java.io.InputStream;
+        import java.util.ArrayList;
+        import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class CollectionActivity extends AppCompatActivity {
+
     protected Context mContext;
-    protected ArrayList<String> collectionListArray = new ArrayList<>();
+    protected ArrayList<String> cardListArray = new ArrayList<>();
     protected ArrayAdapter<String> itemsAdapter;
-    protected ListView collectionListView;
+    protected ListView cardListView;
     protected EditText searchBar;
     protected CardDB mDb;
     protected TextWatcher searchWatcher = new TextWatcher() {
@@ -50,27 +51,27 @@ public class MainActivity extends AppCompatActivity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             ArrayList<String> result = mDb.retrieveAll(searchBar.getText().toString());
             ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
-            collectionListView.setAdapter(itemsAdapter);
+            cardListView.setAdapter(itemsAdapter);
         }
     };
     //protected EditText.On
-    protected ListView.OnItemClickListener seeCollection=new ListView.OnItemClickListener(){
+    protected ListView.OnItemClickListener seeCard=new ListView.OnItemClickListener(){
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            startActivity(new Intent(MainActivity.this, CardViewActivity.class));
+            startActivity(new Intent(CollectionActivity.this, CardViewActivity.class));
 
         }
     };
-    protected ListView.OnItemLongClickListener editCollection = new ListView.OnItemLongClickListener() {
+    protected ListView.OnItemLongClickListener editCard = new ListView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(
                 AdapterView<?> parent,
                 View view,
                 int position,
                 long id) {
-            collectionListArray.remove(position);
-            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, collectionListArray);
-            collectionListView.setAdapter(itemsAdapter);
+            cardListArray.remove(position);
+            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, cardListArray);
+            cardListView.setAdapter(itemsAdapter);
             return false;
         }
     };
@@ -116,15 +117,15 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        collectionListArray.addAll(results);
+        cardListArray.addAll(results);
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
-        collectionListView = findViewById(R.id.collectionList);
-        collectionListArray.add("A");
-        itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, collectionListArray); // pls no mexer
-        collectionListView.setAdapter(itemsAdapter);
-        collectionListView.setOnItemLongClickListener(editCollection);
-        collectionListView.setOnItemClickListener(seeCollection);
+        cardListView = findViewById(R.id.cardList);
+        cardListArray.add("A");
+        itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, cardListArray); // pls no mexer
+        cardListView.setAdapter(itemsAdapter);
+        cardListView.setOnItemLongClickListener(editCard);
+        cardListView.setOnItemClickListener(seeCard);
 
         BottomNavigationView bNavView = findViewById(R.id.bottom_navigation);
         bNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -134,15 +135,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
 
                     case R.id.my_cards:
-
+                        Toast.makeText(CollectionActivity.this, "Action My Cards Clicked", Toast.LENGTH_SHORT).show();
                         break;
 
                     case R.id.deck:
-                        startActivity(new Intent(MainActivity.this, CollectionActivity.class));
+                        Toast.makeText(CollectionActivity.this, "Action DECK Clicked", Toast.LENGTH_SHORT).show();
                         break;
 
                     case R.id.about_us:
-                        Toast.makeText(MainActivity.this, "Action About us Clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CollectionActivity.this, "Action About us Clicked", Toast.LENGTH_SHORT).show();
                         break;
                 }
                 return true;
@@ -171,13 +172,13 @@ public class MainActivity extends AppCompatActivity {
                 String str = newText.toLowerCase();
                 //itemsAdapter.getFilter().filter(newText);
                 List<String> result = new ArrayList<>();
-                for (String card : collectionListArray) {
+                for (String card : cardListArray) {
                     if (card.toLowerCase().contains(newText)) {
                         result.add(card);
                     }
                 }
                 ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
-                collectionListView.setAdapter(itemsAdapter);
+                cardListView.setAdapter(itemsAdapter);
                 return false;
             }
         });

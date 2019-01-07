@@ -7,7 +7,7 @@
         android:id="@+id/my_cards"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
-        android:title="My Cards"
+        android:title="Add cards"
         app:showAsAction="ifRoom"
         />
 
@@ -15,7 +15,7 @@
         android:id="@+id/deck"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
-        android:title="Deck"
+        android:title="Collections"
         app:showAsAction="ifRoom"
         />
 
