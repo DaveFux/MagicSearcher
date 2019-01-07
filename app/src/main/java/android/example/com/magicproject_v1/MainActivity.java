@@ -3,6 +3,10 @@ package android.example.com.magicproject_v1;
 import android.content.Context;
 import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.classes.Mana;
+import android.example.com.magicproject_v1.enums.Rarity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -23,8 +28,11 @@ import android.widget.Toast;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     protected Context mContext;
@@ -57,8 +65,21 @@ public class MainActivity extends AppCompatActivity {
     protected ListView.OnItemClickListener seeCollection=new ListView.OnItemClickListener(){
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            startActivity(new Intent(MainActivity.this, CardViewActivity.class));
+           // startActivity(new Intent(MainActivity.this, CardViewActivity.class));
 
+            /*Intent goToNextActivity = new Intent(getApplicationContext(), CardViewActivity.class);
+            startActivity(goToNextActivity);*/
+            setContentView(R.layout.activity_cardview);
+            ImageView user_image = findViewById(R.id.imageView);
+            System.out.println(parent.getItemAtPosition(position));
+            //user_image.setImageBitmap(getBitmapFromURL(parent.getItemAtPosition(position).toString()));
+            try {
+                user_image.setImageBitmap(new ImageLoader().execute(parent.getItemAtPosition(position).toString()).get());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     };
     protected ListView.OnItemLongClickListener editCollection = new ListView.OnItemLongClickListener() {
@@ -109,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             JSONParser jp = new JSONParser();
             jsonResults.addAll(jp.readJsonStream(json));
             for (Card cardjson : jsonResults) {
-                results.add(cardjson.getName());
+                results.add(cardjson.getImage());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

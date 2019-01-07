@@ -37,6 +37,7 @@ public class JSONParser {
             Rarity rarity = Rarity.COMMON;
             String flavorText="";
             String oracleText="";
+            String image="";
             Mana manaCost = new Mana();
 
             while (reader.hasNext()) {
@@ -73,6 +74,17 @@ public class JSONParser {
                     expansionName = reader.nextString();
                 } else if (field.equals("power")) {
                     power = reader.nextInt();
+                } else if (field.equals("image_uris")) {
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        field = reader.nextName();
+                        if (field.equals("normal")) {
+                            image = reader.nextString();
+                        } else {
+                            reader.skipValue();
+                        }
+                    }
+                    reader.endObject();
                 } else if (field.equals("toughness")) {
                     toughness = reader.nextInt();
                 } else {
@@ -80,7 +92,7 @@ public class JSONParser {
                 }
             }
             reader.endObject();
-            cards.add(new Card(name,  type, power,  toughness,  expansionName, rarity,  flavorText,  oracleText, manaCost));
+            cards.add(new Card(name,  type, power,  toughness,  expansionName, rarity,  flavorText,  oracleText, manaCost, image));
         }
         reader.endArray();
         return cards;

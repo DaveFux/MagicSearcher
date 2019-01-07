@@ -19,5 +19,5 @@
         <activity android:name=".CardViewActivity" />
         <activity android:name=".CollectionActivity"></activity>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

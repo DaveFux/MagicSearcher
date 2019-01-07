@@ -12,11 +12,12 @@ public class Card {
     protected String flavorText;
     protected String oracleText;
     protected Mana manaCost;
+    protected String image;
 
     public Card(String name, String type,
                 int power, int toughness, String expansionName,
                 Rarity rarity, String flavorText, String oracleText,
-                Mana manaCost) {
+                Mana manaCost, String image) {
         this.name = name;
         this.type = type;
         this.power = power;
@@ -26,6 +27,7 @@ public class Card {
         this.flavorText = flavorText;
         this.oracleText = oracleText;
         this.manaCost = manaCost;
+        this.image = image;
     }
 
     public Card(Card card) {
@@ -38,6 +40,7 @@ public class Card {
         this.flavorText = card.getFlavorText();
         this.oracleText = card.getOracleText();
         this.manaCost = card.getManaCost();
+        this.image = card.getImage();
     }
 
     public String getName() {
@@ -111,5 +114,14 @@ public class Card {
     public void setManaCost(Mana manaCost) {
         this.manaCost = manaCost;
     }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     //Name, manacost, type, power, toughness, setName, rarity, flavorText, oracleText-> O que a carta faz
 }
