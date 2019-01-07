@@ -1,6 +1,7 @@
 package android.example.com.magicproject_v1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Mana;
 import android.example.com.magicproject_v1.enums.Rarity;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             // ? Aqui nao acontece nada, por enquanto
-            //Exemplos para esta funcao: Nao sei, esta merda e inutil pra crlho\\
+
         }
 
         @Override
@@ -55,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     //protected EditText.On
+    protected ListView.OnItemClickListener seeCard=new ListView.OnItemClickListener(){
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            Intent goToNextActivity = new Intent(getApplicationContext(), CardViewActivity.class);
+            startActivity(goToNextActivity);
+        }
+    };
     protected ListView.OnItemLongClickListener editCard = new ListView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(
@@ -75,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         init();
     }
 
