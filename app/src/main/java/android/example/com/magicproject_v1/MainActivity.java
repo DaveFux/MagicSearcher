@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected ArrayAdapter<String> itemsAdapter;
     protected ListView collectionListView;
     protected EditText searchBar;
-    protected CardDB mDb;
+    protected CollectionDB mDb;
     protected TextWatcher searchWatcher = new TextWatcher() {
 
         @Override
@@ -65,21 +65,7 @@ public class MainActivity extends AppCompatActivity {
     protected ListView.OnItemClickListener seeCollection=new ListView.OnItemClickListener(){
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-           // startActivity(new Intent(MainActivity.this, CardViewActivity.class));
-
-            /*Intent goToNextActivity = new Intent(getApplicationContext(), CardViewActivity.class);
-            startActivity(goToNextActivity);*/
-            setContentView(R.layout.activity_cardview);
-            ImageView user_image = findViewById(R.id.imageView);
-            System.out.println(parent.getItemAtPosition(position));
-            //user_image.setImageBitmap(getBitmapFromURL(parent.getItemAtPosition(position).toString()));
-            try {
-                user_image.setImageBitmap(new ImageLoader().execute(parent.getItemAtPosition(position).toString()).get());
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            startActivity(new Intent(MainActivity.this, CollectionActivity.class));
         }
     };
     protected ListView.OnItemLongClickListener editCollection = new ListView.OnItemLongClickListener() {
@@ -107,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void init() {
         mContext = this;
-        mDb=new CardDB(mContext);
+        mDb=new CollectionDB(mContext);
         mDb.clear();
         /*Card carta = new Card("Bela carta", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
         Card carta2 = new Card("asd", "Carta", 1, 1, "Bela", Rarity.RARE, "", "", Mana.RedMana(2));
@@ -141,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
         collectionListView = findViewById(R.id.collectionList);
-        collectionListArray.add("A");
         itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, collectionListArray); // pls no mexer
         collectionListView.setAdapter(itemsAdapter);
         collectionListView.setOnItemLongClickListener(editCollection);
@@ -154,21 +139,19 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()) {
 
-                    case R.id.my_cards:
-
+                    case R.id.addCard:
+                        startActivity(new Intent(MainActivity.this, AddCardActivity.class));
                         break;
 
-                    case R.id.deck:
+                    case R.id.collections:
                         startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                         break;
 
                     case R.id.about_us:
                         Toast.makeText(MainActivity.this, "Action About us Clicked", Toast.LENGTH_SHORT).show();
-                        break;
-                }
+                break;
+            }
                 return true;
-
-
             }
         });
     }

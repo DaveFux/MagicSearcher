@@ -16,6 +16,7 @@ package android.example.com.magicproject_v1;
         import android.widget.AdapterView;
         import android.widget.ArrayAdapter;
         import android.widget.EditText;
+        import android.widget.ImageView;
         import android.widget.ListView;
         import android.widget.SearchView;
         import android.widget.Toast;
@@ -25,6 +26,7 @@ package android.example.com.magicproject_v1;
         import java.io.InputStream;
         import java.util.ArrayList;
         import java.util.List;
+        import java.util.concurrent.ExecutionException;
 
 public class CollectionActivity extends AppCompatActivity {
 
@@ -49,7 +51,7 @@ public class CollectionActivity extends AppCompatActivity {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            ArrayList<String> result = mDb.retrieveAll(searchBar.getText().toString());
+            ArrayList<String> result = mDb.retrieveAllCards(searchBar.getText().toString());
             ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
             cardListView.setAdapter(itemsAdapter);
         }
@@ -58,9 +60,23 @@ public class CollectionActivity extends AppCompatActivity {
     protected ListView.OnItemClickListener seeCard=new ListView.OnItemClickListener(){
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            startActivity(new Intent(CollectionActivity.this, CardViewActivity.class));
 
+            // startActivity(new Intent(MainActivity.this, CardViewActivity.class));
+    /*Intent goToNextActivity = new Intent(getApplicationContext(), CardViewActivity.class);
+            startActivity(goToNextActivity);*/
+            setContentView(R.layout.activity_collection);
+            ImageView user_image = findViewById(R.id.imageView);
+            System.out.println(parent.getItemAtPosition(position));
+            //user_image.setImageBitmap(getBitmapFromURL(parent.getItemAtPosition(position).toString()));
+            try {
+                user_image.setImageBitmap(new ImageLoader().execute(parent.getItemAtPosition(position).toString()).get());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
     };
     protected ListView.OnItemLongClickListener editCard = new ListView.OnItemLongClickListener() {
         @Override
@@ -134,11 +150,11 @@ public class CollectionActivity extends AppCompatActivity {
 
                 switch (menuItem.getItemId()) {
 
-                    case R.id.my_cards:
+                    case R.id.addCard:
                         Toast.makeText(CollectionActivity.this, "Action My Cards Clicked", Toast.LENGTH_SHORT).show();
                         break;
 
-                    case R.id.deck:
+                    case R.id.collections:
                         Toast.makeText(CollectionActivity.this, "Action DECK Clicked", Toast.LENGTH_SHORT).show();
                         break;
 

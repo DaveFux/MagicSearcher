@@ -4,7 +4,7 @@
     >
 
     <item
-        android:id="@+id/my_cards"
+        android:id="@+id/addCard"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
         android:title="Add cards"
@@ -12,7 +12,7 @@
         />
 
     <item
-        android:id="@+id/deck"
+        android:id="@+id/collections"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
         android:title="Collections"

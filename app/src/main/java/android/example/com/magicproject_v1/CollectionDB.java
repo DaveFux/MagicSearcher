@@ -13,13 +13,16 @@ import java.util.Objects;
 
 public class CollectionDB extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "CARDS.BD";
+    public static final String DATABASE_NAME = "COLLECTIONS.BD";
     public static final int DATABASE_VERSION = 1;
     public static final String TABLE_CARDS = "t_cards";
-    public static final String TABLE_COLLECTION = "t_collection";
-    public static final String TABLE_DECKS = "t_decks";
+    //public static final String TABLE_COLLECTIONS = "t_collection";
+    public static final String TABLE_COLLECTIONS = "t_collections";
+
+    //public static final String TABLE_DECKS = "t_decks";
     public static final String COL_ID = "col_id";
     public static final String COL_NOME = "col_nome";
+    /*
     public static final String COL_TYPE = "col_type";
     public static final String COL_MANACOST = "col_manaCost";
     public static final String COL_FLAVORTEXT = "col_flavorText";
@@ -28,7 +31,9 @@ public class CollectionDB extends SQLiteOpenHelper {
     public static final String COL_RARITY = "col_rarity";
     public static final String COL_POWER = "col_power";
     public static final String COL_TOUGHNESS = "col_toughness";
-    public static final String TAG = "@CardDB";
+    */
+    public static final String TAG = "@CollectionDB";
+
 
     public CollectionDB(Context context){
         this(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,7 +59,7 @@ public class CollectionDB extends SQLiteOpenHelper {
 
     private void uninstallDB(SQLiteDatabase db) {
         Objects.requireNonNull(db);
-        String strSQL = statementForTableCardsDestruction();
+        String strSQL = statementForTableCollectionsDestruction();
         try {
             db.execSQL(strSQL);
         }catch (Exception e) {
@@ -64,7 +69,7 @@ public class CollectionDB extends SQLiteOpenHelper {
 
     private void installDB(SQLiteDatabase db) {
         Objects.requireNonNull(db);
-        String strSQL = statementForTableCardsCreation();
+        String strSQL = statementForTableCollectionsDestruction();
         try {
             db.execSQL(strSQL);
         }catch (Exception e) {
@@ -77,14 +82,6 @@ public class CollectionDB extends SQLiteOpenHelper {
         if (dbw!=null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_NOME, card.getName());
-            cv.put(COL_TYPE, card.getToughness());
-            cv.put(COL_MANACOST, card.getManaCost().toString());
-            cv.put(COL_FLAVORTEXT, card.getFlavorText());
-            cv.put(COL_ORACLETEXT, card.getOracleText());
-            cv.put(COL_EXPANSIONNAME, card.getExpansionName());
-            cv.put(COL_RARITY, card.getRarity().toString());
-            cv.put(COL_POWER, card.getPower());
-            cv.put(COL_TOUGHNESS, card.getToughness());
 
             long id = dbw.insert(TABLE_CARDS, null, cv);
             dbw.close();
@@ -120,7 +117,7 @@ public class CollectionDB extends SQLiteOpenHelper {
         ArrayList<String> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
-            String query = "select * from " + TABLE_CARDS;
+            String query = "select * from " + TABLE_COLLECTIONS;
             if(!columnName.equals("")) {
                 query += " where " + columnName + " like '%" + filter + "%'";
             }
@@ -146,27 +143,16 @@ public class CollectionDB extends SQLiteOpenHelper {
         installDB(dbw);
     }
 
-    private String statementForTableCardsCreation(){
+    private String statementForCollectionsCreation(){
         String strRet;
-
+        //id,nome
         strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
-                        "(%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , %s TEXT NOT NULL," +
-                        " %s TEXT NOT NULL, %s TEXT, %s TEXT, %s TEXT," +
-                        " %s TEXT NOT NULL, %s TEXT NOT NULL, %s INTEGER, %s INTEGER)",
-                TABLE_CARDS, COL_ID, COL_NOME, COL_TYPE, COL_MANACOST, COL_FLAVORTEXT,
-                COL_ORACLETEXT, COL_EXPANSIONNAME, COL_RARITY, COL_POWER, COL_TOUGHNESS);
+                        "(%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , %s TEXT NOT NULL",
+                TABLE_COLLECTIONS, COL_ID, COL_NOME);
         return strRet;
     }
 
-    private String statementForTableCardsDestruction(){
-        return "DROP TABLE IF EXISTS " + TABLE_CARDS;
-    }
-
-    private String statementForTableCollectionDestruction(){
-        return "DROP TABLE IF EXISTS " + TABLE_COLLECTION;
-    }
-
-    private String statementForTableDecksDestruction(){
-        return "DROP TABLE IF EXISTS " + TABLE_DECKS;
+    private String statementForTableCollectionsDestruction(){
+        return "DROP TABLE IF EXISTS " + TABLE_COLLECTIONS;
     }
 }

@@ -16,7 +16,7 @@ public class CardDB extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "CARDS.BD";
     public static final int DATABASE_VERSION = 1;
     public static final String TABLE_CARDS = "t_cards";
-    public static final String TABLE_COLLECTION = "t_collection";
+    public static final String TABLE_COLLECTIONS = "t_collections";
     public static final String TABLE_DECKS = "t_decks";
     public static final String COL_ID = "col_id";
     public static final String COL_NOME = "col_nome";
@@ -64,7 +64,7 @@ public class CardDB extends SQLiteOpenHelper {
 
     private void installDB(SQLiteDatabase db) {
         Objects.requireNonNull(db);
-        String strSQL = statementForTableCardsCreation();
+        String strSQL = statementForTableCardsCreation()+statementForCollectionsCreation();
         try {
             db.execSQL(strSQL);
         }catch (Exception e) {
@@ -108,15 +108,15 @@ public class CardDB extends SQLiteOpenHelper {
         return null;
     }
 
-    public ArrayList<String> retrieveAll(){
-        return retrieveAll("", "");
+    public ArrayList<String> retrieveAllCards(){
+        return retrieveAllCards("", "");
     }
 
-    public ArrayList<String> retrieveAll(String filter){
-        return retrieveAll(COL_NOME, filter);
+    public ArrayList<String> retrieveAllCards(String filter){
+        return retrieveAllCards(COL_NOME, filter);
     }
 
-    public ArrayList<String> retrieveAll(String columnName, String filter){
+    public ArrayList<String> retrieveAllCards(String columnName, String filter){
         ArrayList<String> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
@@ -136,8 +136,8 @@ public class CardDB extends SQLiteOpenHelper {
         return retorno;
     }
 
-    public int count(String tableName){
-        return retrieveAll().size();
+    public int countCards(String tableName){
+        return retrieveAllCards().size();
     }
 
     public void clear(){
@@ -158,12 +158,21 @@ public class CardDB extends SQLiteOpenHelper {
         return strRet;
     }
 
+    private String statementForCollectionsCreation(){
+        String strRet;
+        //id,nome
+        strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
+                        "(%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , %s TEXT NOT NULL",
+                TABLE_COLLECTIONS, COL_ID, COL_NOME);
+        return strRet;
+    }
+
     private String statementForTableCardsDestruction(){
         return "DROP TABLE IF EXISTS " + TABLE_CARDS;
     }
 
     private String statementForTableCollectionDestruction(){
-        return "DROP TABLE IF EXISTS " + TABLE_COLLECTION;
+        return "DROP TABLE IF EXISTS " + TABLE_COLLECTIONS;
     }
 
     private String statementForTableDecksDestruction(){
