@@ -2,6 +2,7 @@ package android.example.com.magicproject_v1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -24,8 +25,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     protected Context mContext;
-    protected ArrayList<String> collectionListArray = new ArrayList<>();
-    protected ArrayAdapter<String> itemsAdapter;
+    protected ArrayList<Collection> collectionListArray = new ArrayList<>();
+    protected CollectionsArrayAdapter itemsAdapter;
     protected ListView collectionListView;
     protected EditText searchBar;
     protected CardDB mDb;
@@ -44,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            ArrayList<String> result = new ArrayList<>();
-            for (String collectionName : collectionListArray) {
-                if(collectionName.contains(s)){
-                    result.add(collectionName);
+            ArrayList<Collection> result = new ArrayList<>();
+            for (Collection collection : collectionListArray) {
+                if(collection.getName().contains(s)){
+                    result.add(collection);
                 }
             }
-            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
+            CollectionsArrayAdapter itemsAdapter = new CollectionsArrayAdapter(mContext, result);
             collectionListView.setAdapter(itemsAdapter);
         }
     };
@@ -87,18 +88,21 @@ public class MainActivity extends AppCompatActivity {
         mDb=new CardDB(mContext);
         mDb.clear();
 
-        mDb.addCollection("SUPA COLLECTION 1");
-        mDb.addCollection("SUPA COLLECTION 2");
-        mDb.addCollection("SUPA COLLECTION 3");
-        mDb.addCollection("SUPA COLLECTION 4");
+        List<String> tags = new ArrayList<>();
+        tags.add("Aggro");
+        tags.add("Budget");
+        mDb.addCollection(new Collection("SUPA COLLECTION 1", tags, 0));
+        mDb.addCollection(new Collection("SUPA COLLECTION 2", tags, 0));
+        mDb.addCollection(new Collection("SUPA COLLECTION 3", tags, 0));
+        mDb.addCollection(new Collection("SUPA COLLECTION 4", tags, 0));
 
-        ArrayList<String> results = mDb.retrieveAllCollections();
+        ArrayList<Collection> results = mDb.retrieveAllCollections();
 
         collectionListArray.addAll(results);
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
         collectionListView = findViewById(R.id.collectionList);
-        itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, collectionListArray); // pls no mexer
+        itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray); // pls no mexer
         collectionListView.setAdapter(itemsAdapter);
         collectionListView.setOnItemLongClickListener(editCollection);
         collectionListView.setOnItemClickListener(seeCollection);
@@ -141,11 +145,11 @@ public class MainActivity extends AppCompatActivity {
                 String str = newText.toLowerCase();
                 //itemsAdapter.getFilter().filter(newText);
                 List<String> result = new ArrayList<>();
-                for (String card : collectionListArray) {
+                /*for (String card : collectionListArray) {
                     if (card.toLowerCase().contains(newText)) {
                         result.add(card);
                     }
-                }
+                }*/
                 ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
                 collectionListView.setAdapter(itemsAdapter);
                 return false;

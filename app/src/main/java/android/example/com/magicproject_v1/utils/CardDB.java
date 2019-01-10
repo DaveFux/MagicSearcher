@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.classes.Collection;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class CardDB extends SQLiteOpenHelper {
     public static final String COL_RARITY = "col_rarity";
     public static final String COL_POWER = "col_power";
     public static final String COL_TOUGHNESS = "col_toughness";
+    public static final String COL_TAGS = "col_tags";
     public static final String COL_QUANTITY = "col_quantity";
     public static final String TAG = "@CardDB";
 
@@ -104,11 +106,12 @@ public class CardDB extends SQLiteOpenHelper {
         return -2;
     }
 
-    public long addCollection(String collectionName){
+    public long addCollection(Collection collection){
         SQLiteDatabase dbw = this.getWritableDatabase();
         if (dbw!=null) {
             ContentValues cv = new ContentValues();
-            cv.put(COL_NAME, collectionName);
+            cv.put(COL_NAME, collection.getName());
+            cv.put(COL_TAGS, collection.getTags());
 
             long id = dbw.insert(TABLE_COLLECTIONS, null, cv);
             dbw.close();
@@ -117,19 +120,20 @@ public class CardDB extends SQLiteOpenHelper {
         return -2;
     }
 
-    public ArrayList<String> retrieveAllCollections(){
+    public ArrayList<Collection> retrieveAllCollections(){
         return retrieveAllCollections("");
     }
 
-    public ArrayList<String> retrieveAllCollections(String filter){
-        ArrayList<String> retorno = new ArrayList<>();
+    public ArrayList<Collection> retrieveAllCollections(String filter){
+        ArrayList<Collection> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
             String query = "select * from " + TABLE_COLLECTIONS + " where " + COL_NAME + " like '%" + filter + "%'";
             Cursor cursor = dbr.rawQuery(query, null);
             if(cursor.moveToFirst()){
                 while(!cursor.isAfterLast()) {
-                    retorno.add(cursor.getString(1));
+                    Collection c = new Collection(cursor.getString(1), cursor.getString(2), 10);
+                    retorno.add(c);
                     cursor.moveToNext();
                 }
             }
@@ -190,8 +194,9 @@ public class CardDB extends SQLiteOpenHelper {
         String strRet;
 
         strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
-                        "(%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , %s TEXT NOT NULL)",
-                TABLE_COLLECTIONS, COL_ID, COL_NAME);
+                        "(%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , %s TEXT NOT NULL, " +
+                        "%s TEXT NOT NULL)",
+                TABLE_COLLECTIONS, COL_ID, COL_NAME, COL_TAGS);
         return strRet;
     }
 
