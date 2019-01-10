@@ -24,6 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    /* TODO:
+    *
+    *   MainActivity, more like SlowActivity
+    *   imensos problemas de performance para dar fix
+    *   ler mensagens do android durante a execuçao
+    *
+    */
+
     protected Context mContext;
     protected ArrayList<Collection> collectionListArray = new ArrayList<>();
     protected CollectionsArrayAdapter itemsAdapter;
