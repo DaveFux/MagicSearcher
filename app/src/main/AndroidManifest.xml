@@ -20,7 +20,6 @@
         </activity>
         <activity android:name=".CardViewActivity" />
         <activity android:name=".CollectionActivity" />
-        <activity android:name=".AddCardActivity"></activity>
     </application>
 
 </manifest>

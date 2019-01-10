@@ -1,4 +1,4 @@
-package android.example.com.magicproject_v1;
+package android.example.com.magicproject_v1.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

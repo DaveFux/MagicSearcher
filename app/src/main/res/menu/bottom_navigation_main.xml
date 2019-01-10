@@ -4,10 +4,10 @@
     >
 
     <item
-        android:id="@+id/addCard"
+        android:id="@+id/searchCards"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
-        android:title="Add cards"
+        android:title="@string/searchCards"
         app:showAsAction="ifRoom"
         />
 
@@ -15,15 +15,15 @@
         android:id="@+id/collections"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
-        android:title="Collections"
+        android:title="@string/collections"
         app:showAsAction="ifRoom"
         />
 
     <item
-        android:id="@+id/about_us"
+        android:id="@+id/aboutUs"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
-        android:title="About us"
+        android:title="@string/aboutUs"
         app:showAsAction="ifRoom"
         />
 

@@ -1,4 +1,4 @@
-package android.example.com.magicproject_v1;
+package android.example.com.magicproject_v1.utils;
 
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Mana;

@@ -5,7 +5,7 @@
     <item
         android:id="@+id/cardSearch"
         android:icon="@android:drawable/ic_menu_search"
-        android:title="Search Card"
+        android:title="@string/menuTitle"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always">
 

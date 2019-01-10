@@ -3,5 +3,9 @@
     <string name="addText">Add Card</string>
     <string name="helpText">Help</string>
     <string name="hint">Enter Card Name</string>
+    <string name="searchCards">Search cards</string>
+    <string name="collections">Collections</string>
+    <string name="aboutUs">About us</string>
+    <string name="menuTitle">Search Card</string>
 
 </resources>
