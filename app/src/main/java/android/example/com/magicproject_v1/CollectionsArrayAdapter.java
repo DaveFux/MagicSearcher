@@ -30,7 +30,7 @@ public class CollectionsArrayAdapter extends ArrayAdapter<Collection> {
 
         Collection collection = collections.get(position);
 
-        TextView collectionName = listItem.findViewById(R.id.name);
+        TextView collectionName = listItem.findViewById(R.id.collectionName);
         collectionName.setText(collection.getName());
 
         TextView tags = listItem.findViewById(R.id.tags);

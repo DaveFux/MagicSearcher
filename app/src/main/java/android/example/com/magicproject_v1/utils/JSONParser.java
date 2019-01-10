@@ -38,6 +38,7 @@ public class JSONParser {
             String flavorText="";
             String oracleText="";
             String image="";
+            String thumbnail="";
             Mana manaCost = new Mana();
 
             while (reader.hasNext()) {
@@ -80,6 +81,8 @@ public class JSONParser {
                         field = reader.nextName();
                         if (field.equals("normal")) {
                             image = reader.nextString();
+                        } else if (field.equals("art_crop")) {
+                            thumbnail = reader.nextString();
                         } else {
                             reader.skipValue();
                         }
@@ -92,7 +95,7 @@ public class JSONParser {
                 }
             }
             reader.endObject();
-            cards.add(new Card(name,  type, power,  toughness,  expansionName, rarity,  flavorText,  oracleText, manaCost, image));
+            cards.add(new Card(name,  type, power,  toughness,  expansionName, rarity,  flavorText,  oracleText, manaCost, image, thumbnail));
         }
         reader.endArray();
         return cards;

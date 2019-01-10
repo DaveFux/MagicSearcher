@@ -28,8 +28,8 @@ import java.util.List;
 public class CollectionActivity extends AppCompatActivity {
 
     protected Context mContext;
-    protected ArrayList<String> cardListArray = new ArrayList<>();
-    protected ArrayAdapter<String> itemsAdapter;
+    protected ArrayList<Card> cardListArray = new ArrayList<>();
+    protected CardsArrayAdapter itemsAdapter;
     protected ListView cardListView;
     protected EditText searchBar;
     protected CardDB mDb;
@@ -87,7 +87,7 @@ public class CollectionActivity extends AppCompatActivity {
 
         Bundle b = getIntent().getExtras();
         List<Card> jsonResults = new ArrayList<>();
-        List<String> results = new ArrayList<>();
+        //List<String> results = new ArrayList<>();
 
         if(b != null) {
             boolean showAllCards = b.getBoolean("allCards");
@@ -97,9 +97,6 @@ public class CollectionActivity extends AppCompatActivity {
                     int size = json.available();
                     JSONParser jp = new JSONParser();
                     jsonResults.addAll(jp.readJsonStream(json));
-                    for (Card cardjson : jsonResults) {
-                        results.add(cardjson.getImage());
-                    }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -113,8 +110,8 @@ public class CollectionActivity extends AppCompatActivity {
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
 
-        cardListArray.addAll(results);
-        itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, cardListArray); // pls no mexer
+        cardListArray.addAll(jsonResults);
+        itemsAdapter = new CardsArrayAdapter(mContext, cardListArray); // pls no mexer
         cardListView.setAdapter(itemsAdapter);
         cardListView.setOnItemLongClickListener(editCard);
         cardListView.setOnItemClickListener(seeCard);
@@ -126,7 +123,7 @@ public class CollectionActivity extends AppCompatActivity {
                     Toast.makeText(CollectionActivity.this, "Action My Cards Clicked", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.collections:
-                    Toast.makeText(CollectionActivity.this, "Action DECK Clicked", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CollectionActivity.this, MainActivity.class));
                     break;
                 case R.id.aboutUs:
                     Toast.makeText(CollectionActivity.this, "Action About us Clicked", Toast.LENGTH_SHORT).show();
@@ -155,11 +152,11 @@ public class CollectionActivity extends AppCompatActivity {
                 String str = newText.toLowerCase();
                 //itemsAdapter.getFilter().filter(newText);
                 List<String> result = new ArrayList<>();
-                for (String card : cardListArray) {
+                /*for (String card : cardListArray) {
                     if (card.toLowerCase().contains(newText)) {
                         result.add(card);
                     }
-                }
+                }*/
                 ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
                 cardListView.setAdapter(itemsAdapter);
                 return false;

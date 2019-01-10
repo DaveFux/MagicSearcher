@@ -31,7 +31,13 @@ public class Mana implements Comparable<Mana> {
     }
 
     public Mana(String strManaCost) {
-
+        System.out.println(strManaCost);
+        this.set(ManaType.RED, strManaCost.length() - strManaCost.replaceAll("R","").length());
+        this.set(ManaType.BLACK, strManaCost.length() - strManaCost.replaceAll("B","").length());
+        this.set(ManaType.BLUE, strManaCost.length() - strManaCost.replaceAll("U","").length());
+        this.set(ManaType.GREEN, strManaCost.length() - strManaCost.replaceAll("G","").length());
+        this.set(ManaType.WHITE, strManaCost.length() - strManaCost.replaceAll("W","").length());
+        this.set(ManaType.COLORLESS, Integer.parseInt(strManaCost.replaceAll("[^0-9]", "").length() > 0 ? strManaCost.replaceAll("[^0-9]", "") : "0"));
     }
 
     public static Mana RedMana(int value){
@@ -142,6 +148,29 @@ public class Mana implements Comparable<Mana> {
             value = 0;
         }
         return value;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if(this.colorless > 0) sb.append(this.colorless);
+        for (int i = 0; i < this.red; i++) {
+            sb.append("R");
+        }
+        for (int h = 0; h < this.green; h++) {
+            sb.append("G");
+        }
+        for (int g = 0; g < this.blue; g++) {
+            sb.append("U");
+        }
+        for (int j = 0; j < this.black; j++) {
+            sb.append("B");
+        }
+        for (int k = 0; k < this.white; k++) {
+            sb.append("W");
+        }
+        return sb.toString();
     }
 }
 
