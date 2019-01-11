@@ -7,19 +7,26 @@ public class Collection {
 
     private String name;
     private List<String> tags;
+    private List<Card> cards;
     private int numberOfCards;
 
-    public Collection(String name, List<String> tags, int numberOfCards) {
+    public Collection(String name, List<String> tags, List<Card> cards) {
         this.name = name;
         this.tags = tags;
-        this.numberOfCards = numberOfCards;
+        this.cards = cards;
     }
 
-    public Collection(String name, String tags, int numberOfCards) {
+    public Collection(String name, String tags, List<Card> cards) {
         this.name = name;
         this.tags = Arrays.asList(tags.replaceAll("\\[", "")
                 .replaceAll("]", "").split(","));
-        this.numberOfCards = numberOfCards;
+        this.cards = cards;
+    }
+
+    public Collection(String name, String tags) {
+        this.name = name;
+        this.tags = Arrays.asList(tags.replaceAll("\\[", "")
+                .replaceAll("]", "").split(","));
     }
 
     public String getName() {
@@ -50,5 +57,13 @@ public class Collection {
 
     public void setNumberOfCards(int numberOfCards) {
         this.numberOfCards = numberOfCards;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 }

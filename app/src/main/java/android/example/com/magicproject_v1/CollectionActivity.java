@@ -48,7 +48,7 @@ public class CollectionActivity extends AppCompatActivity {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            /*ArrayList<String> result = mDb.retrieveAllCards(searchBar.getText().toString());
+            /*ArrayList<String> result = mDb.retrieveCards(searchBar.getText().toString());
             ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
             cardListView.setAdapter(itemsAdapter);*/
         }
@@ -81,28 +81,31 @@ public class CollectionActivity extends AppCompatActivity {
     protected void init() {
         mContext = this;
         mDb = new CardDB(mContext);
-        mDb.clear();
 
         cardListView = findViewById(R.id.cardList);
 
         Bundle b = getIntent().getExtras();
-        List<Card> jsonResults = new ArrayList<>();
+        List<Card> results = new ArrayList<>();
         //List<String> results = new ArrayList<>();
 
         if(b != null) {
             boolean showAllCards = b.getBoolean("allCards");
+            String collectionName = b.getString("collectionName");
+            int collectionId = b.getInt("collectionId");
             if(showAllCards){
                 try {
                     InputStream json = mContext.getAssets().open("cards.json");
                     int size = json.available();
                     JSONParser jp = new JSONParser();
-                    jsonResults.addAll(jp.readJsonStream(json));
+                    results.addAll(jp.readJsonStream(json));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            //results.addAll(mDb.retrieveCards(collectionName));
+            results.addAll(mDb.retrieveAllCardsInCollection(collectionId));
         }
 
         //ArrayList<String> results = mDb.retrieveAll();
@@ -110,7 +113,7 @@ public class CollectionActivity extends AppCompatActivity {
         //searchBar = findViewById(R.id.cardSearch);
         //searchBar.addTextChangedListener(searchWatcher);
 
-        cardListArray.addAll(jsonResults);
+        cardListArray.addAll(results);
         itemsAdapter = new CardsArrayAdapter(mContext, cardListArray); // pls no mexer
         cardListView.setAdapter(itemsAdapter);
         cardListView.setOnItemLongClickListener(editCard);

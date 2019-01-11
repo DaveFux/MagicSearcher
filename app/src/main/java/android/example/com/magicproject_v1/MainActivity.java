@@ -2,8 +2,10 @@ package android.example.com.magicproject_v1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
+import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,9 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
     protected ListView.OnItemClickListener seeCollection = (parent, view, position, id) -> {
         Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
         Bundle b = new Bundle();
-        b.putString("collectionName", parent.getItemAtPosition(position).toString());
+        b.putString("collectionName", collectionListArray.get(position).getName());
+        b.putInt("collectionId", position + 1);
         intent.putExtras(b);
         startActivity(intent);
     };
@@ -100,10 +106,24 @@ public class MainActivity extends AppCompatActivity {
         List<String> tags = new ArrayList<>();
         tags.add("Aggro");
         tags.add("Budget");
-        mDb.addCollection(new Collection("SUPA COLLECTION 1", tags, 0));
-        mDb.addCollection(new Collection("SUPA COLLECTION 2", tags, 0));
-        mDb.addCollection(new Collection("SUPA COLLECTION 3", tags, 0));
-        mDb.addCollection(new Collection("SUPA COLLECTION 4", tags, 0));
+        List<Card> cards = new ArrayList<>();
+        try {
+            InputStream json = mContext.getAssets().open("cards.json");
+            int size = json.available();
+            JSONParser jp = new JSONParser();
+            cards.addAll(jp.readJsonStream(json));
+            for(Card card : cards){
+                mDb.addCard(card);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mDb.addCollection(new Collection("SUPA COLLECTION 1", tags, cards));
+        mDb.addCollection(new Collection("SUPA COLLECTION 2", tags, cards));
+        mDb.addCollection(new Collection("SUPA COLLECTION 3", tags, cards));
+        mDb.addCollection(new Collection("SUPA COLLECTION 4", tags, cards));
 
         ArrayList<Collection> results = mDb.retrieveAllCollections();
 

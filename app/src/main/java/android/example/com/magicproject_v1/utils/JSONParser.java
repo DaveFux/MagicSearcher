@@ -4,7 +4,6 @@ import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Mana;
 import android.example.com.magicproject_v1.enums.Rarity;
 import android.util.JsonReader;
-import android.util.JsonToken;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +28,7 @@ public class JSONParser {
         reader.beginArray();
         while (reader.hasNext()) {
             reader.beginObject();
+            String id="";
             String name="";
             String type="";
             int power=0;
@@ -43,8 +43,10 @@ public class JSONParser {
 
             while (reader.hasNext()) {
                 String field = reader.nextName();
-                if (field.equals("name")) {
-                    name = reader.nextString();
+                if (field.equals("id")) {
+                    id = reader.nextString();
+                }else if (field.equals("name")) {
+                        name = reader.nextString();
                 } else if (field.equals("type_line")) {
                     type = reader.nextString();
                 } else if (field.equals("mana_cost")) {
@@ -95,7 +97,7 @@ public class JSONParser {
                 }
             }
             reader.endObject();
-            cards.add(new Card(name,  type, power,  toughness,  expansionName, rarity,  flavorText,  oracleText, manaCost, image, thumbnail));
+            cards.add(new Card(id, name,  type, power,  toughness,  expansionName, rarity,  flavorText,  oracleText, manaCost, image, thumbnail));
         }
         reader.endArray();
         return cards;

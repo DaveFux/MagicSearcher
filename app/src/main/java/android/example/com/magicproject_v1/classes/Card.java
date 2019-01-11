@@ -3,6 +3,8 @@ package android.example.com.magicproject_v1.classes;
 import android.example.com.magicproject_v1.enums.Rarity;
 
 public class Card {
+
+    protected String id;
     protected String name;
     protected String type;
     protected int power;
@@ -15,10 +17,11 @@ public class Card {
     protected String image;
     protected String thumbnail;
 
-    public Card(String name, String type,
+    public Card(String id, String name, String type,
                 int power, int toughness, String expansionName,
                 Rarity rarity, String flavorText, String oracleText,
                 Mana manaCost, String image, String thumbnail) {
+        this.id = id;
         this.name = name;
         this.type = type;
         this.power = power;
@@ -32,7 +35,26 @@ public class Card {
         this.thumbnail = thumbnail;
     }
 
+    public Card(String id, String name, String type, String manaCost,
+                String flavorText, String oracleText, String expansionName, String rarity,
+                int power, int toughness, String image, String thumbnail) {
+        System.out.println(manaCost);
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.power = power;
+        this.toughness = toughness;
+        this.expansionName = expansionName;
+        this.rarity = rarityFromString(rarity);
+        this.flavorText = flavorText;
+        this.oracleText = oracleText;
+        this.manaCost = new Mana(manaCost);
+        this.image = image;
+        this.thumbnail = thumbnail;
+    }
+
     public Card(Card card) {
+        this.id = card.getId();
         this.name = card.getName();
         this.type = card.getType();
         this.power = card.getPower();
@@ -43,6 +65,19 @@ public class Card {
         this.oracleText = card.getOracleText();
         this.manaCost = card.getManaCost();
         this.image = card.getImage();
+        this.thumbnail = card.getThumbnail();
+    }
+
+    private Rarity rarityFromString(String rarity) {
+        return Rarity.COMMON;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -31,7 +31,6 @@ public class Mana implements Comparable<Mana> {
     }
 
     public Mana(String strManaCost) {
-        System.out.println(strManaCost);
         this.set(ManaType.RED, strManaCost.length() - strManaCost.replaceAll("R","").length());
         this.set(ManaType.BLACK, strManaCost.length() - strManaCost.replaceAll("B","").length());
         this.set(ManaType.BLUE, strManaCost.length() - strManaCost.replaceAll("U","").length());
