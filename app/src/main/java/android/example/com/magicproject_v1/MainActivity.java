@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //protected Menu pMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,10 +118,15 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case R.id.collectionList:
-                    startActivity(new Intent(MainActivity.this, CollectionActivity.class));
+                    //startActivity(new Intent(MainActivity.this, CollectionActivity.class));
                     break;
-                case R.id.aboutUs:
-                    Toast.makeText(MainActivity.this, "Action About us Clicked", Toast.LENGTH_SHORT).show();
+                case R.id.randomCard:
+                    Card randomCard = mDb.retrieveCard();
+                    Intent randomCardIntent = new Intent(MainActivity.this, CardViewActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("image", randomCard.getImage());
+                    randomCardIntent.putExtras(bundle);
+                    startActivity(randomCardIntent);
             break;
         }
         return true;
@@ -133,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = this.getMenuInflater();
         mi.inflate(R.menu.menu_search, menu);
-        mi.inflate(R.menu.menu_1, menu);
+        mi.inflate(R.menu.menu_main_activity, menu);
         MenuItem item = menu.findItem(R.id.cardSearch);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -162,9 +166,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.addCards:
+            case R.id.addCollection:
+                // TODO:
                 break;
-            case R.id.help:
+            case R.id.aboutUs:
+                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

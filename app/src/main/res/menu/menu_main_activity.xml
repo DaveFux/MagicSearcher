@@ -2,12 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/addCards"
-        android:title="@string/addText" />
-
-    <item
-        android:id="@+id/help"
-        android:title="@string/helpText" />
+        android:id="@+id/addCollection"
+        android:title="@string/addCollection" />
 
     <item
         android:id="@+id/aboutUs"

@@ -3,6 +3,7 @@ package android.example.com.magicproject_v1;
 import android.content.Context;
 import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
 import android.example.com.magicproject_v1.utils.JSONParser;
 import android.support.design.widget.BottomNavigationView;
@@ -99,13 +100,17 @@ public class CollectionActivity extends AppCompatActivity {
         bNavView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.searchCards:
-                    Toast.makeText(CollectionActivity.this, "Action My Cards Clicked", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(CollectionActivity.this, CollectionActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("allCards", true);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                     break;
-                case R.id.collections:
+                case R.id.collectionList:
                     startActivity(new Intent(CollectionActivity.this, MainActivity.class));
                     break;
-                case R.id.aboutUs:
-                    Toast.makeText(CollectionActivity.this, "Action About us Clicked", Toast.LENGTH_SHORT).show();
+                case R.id.randomCard:
+                    startActivity(new Intent(CollectionActivity.this, AboutUsActivity.class));
                     break;
             }
             return true;
@@ -150,6 +155,9 @@ public class CollectionActivity extends AppCompatActivity {
             case R.id.addCards:
                 break;
             case R.id.help:
+                break;
+            case R.id.aboutUs:
+                startActivity(new Intent(CollectionActivity.this, AboutUsActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

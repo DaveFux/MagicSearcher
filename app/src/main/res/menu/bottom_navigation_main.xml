@@ -20,12 +20,11 @@
         />
 
     <item
-        android:id="@+id/aboutUs"
+        android:id="@+id/randomCard"
         android:enabled="true"
         android:icon="@drawable/ic_launcher_background"
-        android:title="@string/aboutUs"
+        android:title="@string/randomCard"
         app:showAsAction="ifRoom"
         />
-
 
 </menu>
