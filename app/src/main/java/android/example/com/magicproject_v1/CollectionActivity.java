@@ -31,28 +31,7 @@ public class CollectionActivity extends AppCompatActivity {
     protected ArrayList<Card> cardListArray = new ArrayList<>();
     protected CardsArrayAdapter itemsAdapter;
     protected ListView cardListView;
-    protected EditText searchBar;
     protected CardDB mDb;
-
-    protected TextWatcher searchWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // ? Aqui nao acontece nada, por enquanto
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // ? Aqui nao acontece nada, por enquanto
-            //Exemplos para esta funcao: Fazer um historico de procuras
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            /*ArrayList<String> result = mDb.retrieveCards(searchBar.getText().toString());
-            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
-            cardListView.setAdapter(itemsAdapter);*/
-        }
-    };
 
     //protected EditText.On
     protected ListView.OnItemClickListener seeCard = (parent, view, position, id) -> {
@@ -110,9 +89,6 @@ public class CollectionActivity extends AppCompatActivity {
 
         //ArrayList<String> results = mDb.retrieveAll();
 
-        //searchBar = findViewById(R.id.cardSearch);
-        //searchBar.addTextChangedListener(searchWatcher);
-
         cardListArray.addAll(results);
         itemsAdapter = new CardsArrayAdapter(mContext, cardListArray); // pls no mexer
         cardListView.setAdapter(itemsAdapter);
@@ -153,15 +129,14 @@ public class CollectionActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 String str = newText.toLowerCase();
-                //itemsAdapter.getFilter().filter(newText);
-                List<String> result = new ArrayList<>();
-                /*for (String card : cardListArray) {
-                    if (card.toLowerCase().contains(newText)) {
-                        result.add(card);
+                List<Card> filteredArray = new ArrayList<>();
+                for (Card card : cardListArray) {
+                    if (card.getName().toLowerCase().contains(str)) {
+                        filteredArray.add(card);
                     }
-                }*/
-                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
-                cardListView.setAdapter(itemsAdapter);
+                }
+                CardsArrayAdapter filteredAdapter = new CardsArrayAdapter(mContext, filteredArray);
+                cardListView.setAdapter(filteredAdapter);
                 return false;
             }
         });

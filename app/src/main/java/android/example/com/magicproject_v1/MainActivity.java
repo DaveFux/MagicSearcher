@@ -42,33 +42,7 @@ public class MainActivity extends AppCompatActivity {
     protected ArrayList<Collection> collectionListArray = new ArrayList<>();
     protected CollectionsArrayAdapter itemsAdapter;
     protected ListView collectionListView;
-    protected EditText searchBar;
     protected CardDB mDb;
-    protected TextWatcher searchWatcher = new TextWatcher() {
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // ? Aqui nao acontece nada, por enquanto
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // ? Aqui nao acontece nada, por enquanto
-            //Exemplos para esta funcao: Fazer um historico de procuras
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            ArrayList<Collection> result = new ArrayList<>();
-            for (Collection collection : collectionListArray) {
-                if(collection.getName().contains(s)){
-                    result.add(collection);
-                }
-            }
-            CollectionsArrayAdapter itemsAdapter = new CollectionsArrayAdapter(mContext, result);
-            collectionListView.setAdapter(itemsAdapter);
-        }
-    };
 
     //protected EditText.On
     protected ListView.OnItemClickListener seeCollection = (parent, view, position, id) -> {
@@ -109,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         List<Card> cards = new ArrayList<>();
         try {
             InputStream json = mContext.getAssets().open("cards.json");
-            int size = json.available();
+            int size = json.available(); // verifica se o json está disponivel
             JSONParser jp = new JSONParser();
             cards.addAll(jp.readJsonStream(json));
             for(Card card : cards){
@@ -128,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Collection> results = mDb.retrieveAllCollections();
 
         collectionListArray.addAll(results);
-        //searchBar = findViewById(R.id.cardSearch);
-        //searchBar.addTextChangedListener(searchWatcher);
         collectionListView = findViewById(R.id.collectionList);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray); // pls no mexer
         collectionListView.setAdapter(itemsAdapter);
@@ -169,18 +141,18 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 String str = newText.toLowerCase();
-                //itemsAdapter.getFilter().filter(newText);
-                List<String> result = new ArrayList<>();
-                /*for (String card : collectionListArray) {
-                    if (card.toLowerCase().contains(newText)) {
-                        result.add(card);
+                List<Collection> filteredArray = new ArrayList<>();
+                for (Collection collection : collectionListArray) {
+                    if (collection.getName().toLowerCase().contains(str)) {
+                        filteredArray.add(collection);
                     }
-                }*/
-                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, result);
-                collectionListView.setAdapter(itemsAdapter);
+                }
+                CollectionsArrayAdapter filteredAdapter = new CollectionsArrayAdapter(mContext, filteredArray);
+                collectionListView.setAdapter(filteredAdapter);
                 return false;
             }
         });

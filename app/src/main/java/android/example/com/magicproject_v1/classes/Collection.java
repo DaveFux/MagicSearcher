@@ -16,13 +16,6 @@ public class Collection {
         this.cards = cards;
     }
 
-    public Collection(String name, String tags, List<Card> cards) {
-        this.name = name;
-        this.tags = Arrays.asList(tags.replaceAll("\\[", "")
-                .replaceAll("]", "").split(","));
-        this.cards = cards;
-    }
-
     public Collection(String name, String tags) {
         this.name = name;
         this.tags = Arrays.asList(tags.replaceAll("\\[", "")
