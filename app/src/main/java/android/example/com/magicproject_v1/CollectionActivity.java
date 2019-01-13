@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -33,9 +34,7 @@ public class CollectionActivity extends AppCompatActivity {
     protected CardsArrayAdapter itemsAdapter;
     protected ListView cardListView;
     protected CardDB mDb;
-
     Bundle bundle;
-
     AlphaAnimation inAnimation;
     AlphaAnimation outAnimation;
     FrameLayout progressBarHolder;
@@ -139,8 +138,12 @@ public class CollectionActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()){
             case R.id.deleteFromCollection:
+                cardListArray.remove((int) info.id);
+                CardsArrayAdapter cardsArrayAdapter = new CardsArrayAdapter(mContext, cardListArray);
+                cardListView.setAdapter(cardsArrayAdapter);
                 Toast.makeText(mContext, "Item deleted from collection", Toast.LENGTH_SHORT).show();
                 return true;
                 default: return super.onContextItemSelected(item);

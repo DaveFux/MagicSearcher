@@ -195,12 +195,17 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.context_menu_collections, menu);
+
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()){
             case R.id.deleteCollection:
+                collectionListArray.remove((int) info.id);
+                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
+                collectionListView.setAdapter(collectionsArrayAdapter);
                 Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
                 return true;
             default: return super.onContextItemSelected(item);
