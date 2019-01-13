@@ -22,6 +22,7 @@
         <activity android:name=".CollectionActivity" />
         <activity android:name=".AboutUsActivity" />
         <activity android:name=".NewCollectionActivity" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

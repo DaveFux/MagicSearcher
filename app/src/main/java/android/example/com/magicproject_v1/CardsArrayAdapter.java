@@ -1,8 +1,10 @@
 package android.example.com.magicproject_v1;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.utils.ImageLoader;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +37,16 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
 
         //TODO: mostrar cartas repetidas
 
-        ImageView thumbnail = listItem.findViewById(R.id.thumbnail);
-        try {
-            thumbnail.setImageBitmap(new ImageLoader().execute(card.getThumbnail()).get());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if(preferences.getBoolean("thumbnails", true)) {
+            ImageView thumbnail = listItem.findViewById(R.id.thumbnail);
+            try {
+                thumbnail.setImageBitmap(new ImageLoader().execute(card.getThumbnail()).get());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         TextView cardName = listItem.findViewById(R.id.cardName);

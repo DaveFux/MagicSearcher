@@ -172,9 +172,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.addCollection:
                 startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
                 break;
-            case R.id.aboutUs:
-                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                break;
             case R.id.updateAllCollections:
                 collectionListArray.clear();
                 collectionListArray.addAll(mDb.retrieveAllCollections());
@@ -186,6 +183,12 @@ public class MainActivity extends AppCompatActivity {
                 collectionListArray.clear();
                 CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
                 collectionListView.setAdapter(collectionsArrayAdapter);
+                break;
+            case R.id.settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                break;
+            case R.id.aboutUs:
+                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

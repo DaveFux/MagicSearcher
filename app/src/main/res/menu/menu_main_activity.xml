@@ -6,15 +6,19 @@
         android:title="@string/addCollection" />
 
     <item
-        android:id="@+id/aboutUs"
-        android:title="@string/aboutUs" />
-
-    <item
         android:id="@+id/updateAllCollections"
         android:title="@string/updateAllCollections" />
 
     <item
         android:id="@+id/deleteAllCollections"
         android:title="@string/deleteAllCollections" />
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/settings" />
+
+    <item
+        android:id="@+id/aboutUs"
+        android:title="@string/aboutUs" />
 
 </menu>
