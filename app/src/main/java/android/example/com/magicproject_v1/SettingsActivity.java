@@ -22,6 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void init() {
         mContext = this;
+        setTitle("Options");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         Switch thumbnailSwitch = findViewById(R.id.switchThumbnail);
         thumbnailSwitch.setChecked(preferences.getBoolean("thumbnails", true));

@@ -81,7 +81,12 @@ public class CollectionActivity extends AppCompatActivity {
                     startActivity(new Intent(CollectionActivity.this, MainActivity.class));
                     break;
                 case R.id.randomCard:
-                    startActivity(new Intent(CollectionActivity.this, AboutUsActivity.class));
+                    Card randomCard = mDb.retrieveCard();
+                    Intent randomCardIntent = new Intent(CollectionActivity.this, CardViewActivity.class);
+                    Bundle randomCardBundle = new Bundle();
+                    randomCardBundle.putString("image", randomCard.getImage());
+                    randomCardIntent.putExtras(randomCardBundle);
+                    startActivity(randomCardIntent);
                     break;
             }
             return true;
@@ -123,6 +128,9 @@ public class CollectionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.settings:
+                startActivity(new Intent(CollectionActivity.this, SettingsActivity.class));
+                break;
             case R.id.aboutUs:
                 startActivity(new Intent(CollectionActivity.this, AboutUsActivity.class));
                 break;
@@ -177,6 +185,7 @@ public class CollectionActivity extends AppCompatActivity {
                 boolean showAllCards = bundle.getBoolean("allCards");
                 String collectionName = bundle.getString("collectionName");
                 int collectionId = bundle.getInt("collectionId");
+                setTitle(collectionName);
                 if(showAllCards){
                     try {
                         InputStream json = mContext.getAssets().open("cards.json");
