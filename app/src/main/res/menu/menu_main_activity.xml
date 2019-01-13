@@ -10,11 +10,11 @@
         android:title="@string/aboutUs" />
 
     <item
-        android:id="@+id/updateCollections"
-        android:title="@string/updateCollections" />
+        android:id="@+id/updateAllCollections"
+        android:title="@string/updateAllCollections" />
 
     <item
-        android:id="@+id/deleteCollections"
-        android:title="@string/deleteCollections" />
+        android:id="@+id/deleteAllCollections"
+        android:title="@string/deleteAllCollections" />
 
 </menu>

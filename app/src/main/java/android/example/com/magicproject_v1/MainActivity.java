@@ -1,5 +1,6 @@
 package android.example.com.magicproject_v1;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
@@ -11,6 +12,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     protected ListView collectionListView;
     protected CardDB mDb;
 
-    //protected EditText.On
     protected ListView.OnItemClickListener seeCollection = (parent, view, position, id) -> {
         Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
         Bundle b = new Bundle();
@@ -52,16 +53,6 @@ public class MainActivity extends AppCompatActivity {
         b.putInt("collectionId", position + 1);
         intent.putExtras(b);
         startActivity(intent);
-    };
-
-    protected ListView.OnItemLongClickListener editCollection = new ListView.OnItemLongClickListener() {
-        @Override
-        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            /*collectionListArray.remove(position);
-            ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, collectionListArray);
-            collectionListView.setAdapter(itemsAdapter);*/
-            return false;
-        }
     };
 
     @Override
@@ -116,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
         collectionListView = findViewById(R.id.collectionList);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray); // pls no mexer
         collectionListView.setAdapter(itemsAdapter);
-        collectionListView.setOnItemLongClickListener(editCollection);
         collectionListView.setOnItemClickListener(seeCollection);
 
+        registerForContextMenu(collectionListView);
         BottomNavigationView bNavView = findViewById(R.id.bottom_navigation);
         bNavView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
@@ -184,13 +175,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.aboutUs:
                 startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                 break;
-            case R.id.updateCollections:
+            case R.id.updateAllCollections:
                 collectionListArray.clear();
                 collectionListArray.addAll(mDb.retrieveAllCollections());
                 CollectionsArrayAdapter updateCollections = new CollectionsArrayAdapter(mContext, collectionListArray);
                 collectionListView.setAdapter(updateCollections);
                 break;
-            case R.id.deleteCollections:
+            case R.id.deleteAllCollections:
                 mDb.deleteAllCollections();
                 collectionListArray.clear();
                 CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
@@ -198,5 +189,21 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu_collections, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.deleteCollection:
+                Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
+                return true;
+            default: return super.onContextItemSelected(item);
+        }
     }
 }

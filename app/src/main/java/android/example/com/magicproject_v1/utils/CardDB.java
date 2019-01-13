@@ -172,6 +172,7 @@ public class CardDB extends SQLiteOpenHelper {
         return retorno;
     }
 
+    // COMPLETED
     public boolean deleteAllCollections(){
         SQLiteDatabase dbw = this.getWritableDatabase();
         if (dbw!=null) {
@@ -208,8 +209,6 @@ public class CardDB extends SQLiteOpenHelper {
             String query = "select " + COL_ID_CARDS + " from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
-            System.out.println(query);
-            System.out.println(cursor.moveToFirst());
             if(cursor.moveToFirst()){
                 while(!cursor.isAfterLast()) {
                     String cardId = cursor.getString(0);

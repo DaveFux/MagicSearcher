@@ -3,19 +3,19 @@ package android.example.com.magicproject_v1;
 import android.content.Context;
 import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
-import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
 import android.example.com.magicproject_v1.utils.JSONParser;
+import android.os.AsyncTask;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -34,7 +34,12 @@ public class CollectionActivity extends AppCompatActivity {
     protected ListView cardListView;
     protected CardDB mDb;
 
-    //protected EditText.On
+    Bundle bundle;
+
+    AlphaAnimation inAnimation;
+    AlphaAnimation outAnimation;
+    FrameLayout progressBarHolder;
+
     protected ListView.OnItemClickListener seeCard = (parent, view, position, id) -> {
         Intent intent = new Intent(CollectionActivity.this, CardViewActivity.class);
         Bundle b = new Bundle();
@@ -43,14 +48,6 @@ public class CollectionActivity extends AppCompatActivity {
         startActivity(intent);
     };
 
-    protected ListView.OnItemLongClickListener editCard = (parent, view, position, id) -> {
-        /*cardListArray.remove(position);
-        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, cardListArray);
-        cardListView.setAdapter(itemsAdapter);*/
-        return false;
-    };
-
-    //protected Menu pMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,40 +58,15 @@ public class CollectionActivity extends AppCompatActivity {
     protected void init() {
         mContext = this;
         mDb = new CardDB(mContext);
-
         cardListView = findViewById(R.id.cardList);
+        progressBarHolder = findViewById(R.id.progressBarHolder);
 
-        Bundle b = getIntent().getExtras();
-        List<Card> results = new ArrayList<>();
-        //List<String> results = new ArrayList<>();
+        bundle = getIntent().getExtras();
 
-        if(b != null) {
-            boolean showAllCards = b.getBoolean("allCards");
-            String collectionName = b.getString("collectionName");
-            int collectionId = b.getInt("collectionId");
-            if(showAllCards){
-                try {
-                    InputStream json = mContext.getAssets().open("cards.json");
-                    int size = json.available();
-                    JSONParser jp = new JSONParser();
-                    results.addAll(jp.readJsonStream(json));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            //results.addAll(mDb.retrieveCards(collectionName));
-            results.addAll(mDb.retrieveAllCardsInCollection(collectionId));
-        }
+        new LoadCardsFromCollections().execute();
 
-        //ArrayList<String> results = mDb.retrieveAll();
-
-        cardListArray.addAll(results);
-        itemsAdapter = new CardsArrayAdapter(mContext, cardListArray); // pls no mexer
-        cardListView.setAdapter(itemsAdapter);
-        cardListView.setOnItemLongClickListener(editCard);
         cardListView.setOnItemClickListener(seeCard);
+        registerForContextMenu(cardListView);
 
         BottomNavigationView bNavView = findViewById(R.id.bottom_navigation);
         bNavView.setOnNavigationItemSelectedListener(menuItem -> {
@@ -121,7 +93,7 @@ public class CollectionActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = this.getMenuInflater();
         mi.inflate(R.menu.menu_search, menu);
-        mi.inflate(R.menu.menu_1, menu);
+        mi.inflate(R.menu.menu_collection_activity, menu);
         MenuItem item = menu.findItem(R.id.cardSearch);
         SearchView searchView = (SearchView) item.getActionView();
 
@@ -152,14 +124,72 @@ public class CollectionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.addCards:
-                break;
-            case R.id.help:
-                break;
             case R.id.aboutUs:
                 startActivity(new Intent(CollectionActivity.this, AboutUsActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu_cards, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.deleteFromCollection:
+                Toast.makeText(mContext, "Item deleted from collection", Toast.LENGTH_SHORT).show();
+                return true;
+                default: return super.onContextItemSelected(item);
+        }
+    }
+
+    private class LoadCardsFromCollections extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            inAnimation = new AlphaAnimation(0f, 1f);
+            inAnimation.setDuration(200);
+            progressBarHolder.setAnimation(inAnimation);
+            progressBarHolder.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            outAnimation = new AlphaAnimation(1f, 0f);
+            outAnimation.setDuration(200);
+            progressBarHolder.setAnimation(outAnimation);
+            progressBarHolder.setVisibility(View.GONE);
+            cardListView.setAdapter(itemsAdapter);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if(bundle != null) {
+                boolean showAllCards = bundle.getBoolean("allCards");
+                String collectionName = bundle.getString("collectionName");
+                int collectionId = bundle.getInt("collectionId");
+                if(showAllCards){
+                    try {
+                        InputStream json = mContext.getAssets().open("cards.json");
+                        int size = json.available();
+                        JSONParser jp = new JSONParser();
+                        cardListArray.addAll(jp.readJsonStream(json));
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
+                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray); // pls no mexer
+            }
+            return null;
+        }
     }
 }
