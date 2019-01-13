@@ -1,5 +1,6 @@
 package android.example.com.magicproject_v1.classes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,12 +15,15 @@ public class Collection {
         this.name = name;
         this.tags = tags;
         this.cards = cards;
+        this.numberOfCards = cards.size();
     }
 
     public Collection(String name, String tags) {
         this.name = name;
         this.tags = Arrays.asList(tags.replaceAll("\\[", "")
                 .replaceAll("]", "").split(","));
+        this.cards = new ArrayList<>();
+        this.numberOfCards = 0;
     }
 
     public String getName() {

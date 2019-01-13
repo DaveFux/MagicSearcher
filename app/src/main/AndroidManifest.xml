@@ -21,6 +21,7 @@
         <activity android:name=".CardViewActivity" />
         <activity android:name=".CollectionActivity" />
         <activity android:name=".AboutUsActivity" />
+        <activity android:name=".NewCollectionActivity" />
     </application>
 
 </manifest>

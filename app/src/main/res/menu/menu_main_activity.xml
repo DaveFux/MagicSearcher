@@ -9,4 +9,12 @@
         android:id="@+id/aboutUs"
         android:title="@string/aboutUs" />
 
+    <item
+        android:id="@+id/updateCollections"
+        android:title="@string/updateCollections" />
+
+    <item
+        android:id="@+id/deleteCollections"
+        android:title="@string/deleteCollections" />
+
 </menu>

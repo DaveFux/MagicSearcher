@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MagicProject</string>
     <string name="addCollection">New collection</string>
+    <string name="addText">New collection</string>
     <string name="helpText">Help</string>
     <string name="hint">Enter Card Name</string>
     <string name="searchCards">Search cards</string>
@@ -11,4 +12,9 @@
         \nO objetivo desta app é fornecer uma plataforma fácil para guardar e aceder a informação sobre o jogo de cartas Magic The Gathering</string>
     <string name="AboutAutores">Desenvolvida por: \n\tBruno Ferreira - 150118025 \n\tDavid Silva - 160118000 \n\tPaulo Pimenta - 160118000</string>
     <string name="randomCard">Random card</string>
+    <string name="edit_message">Enter collection name</string>
+    <string name="tags_message">Enter collection tags</string>
+    <string name="button_create">Create</string>
+    <string name="deleteCollections">Delete all collections</string>
+    <string name="updateCollections">Update all collections</string>
 </resources>

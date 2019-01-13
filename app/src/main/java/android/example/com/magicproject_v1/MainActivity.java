@@ -100,6 +100,18 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<Collection> results = mDb.retrieveAllCollections();
 
+        Bundle newCollectionBundle = getIntent().getExtras();
+        if(newCollectionBundle != null){
+            String bName = newCollectionBundle.getString("name");
+            String bTags = newCollectionBundle.getString("tags");
+
+            if(bName != null && bTags != null){
+                Collection c = new Collection(bName, bTags);
+                mDb.addCollection(c);
+                results.add(c);
+            }
+        }
+
         collectionListArray.addAll(results);
         collectionListView = findViewById(R.id.collectionList);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray); // pls no mexer
@@ -167,10 +179,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addCollection:
-                // TODO:
+                startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
                 break;
             case R.id.aboutUs:
                 startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
+                break;
+            case R.id.updateCollections:
+                collectionListArray.clear();
+                collectionListArray.addAll(mDb.retrieveAllCollections());
+                CollectionsArrayAdapter updateCollections = new CollectionsArrayAdapter(mContext, collectionListArray);
+                collectionListView.setAdapter(updateCollections);
+                break;
+            case R.id.deleteCollections:
+                mDb.deleteAllCollections();
+                collectionListArray.clear();
+                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
+                collectionListView.setAdapter(collectionsArrayAdapter);
                 break;
         }
         return super.onOptionsItemSelected(item);
