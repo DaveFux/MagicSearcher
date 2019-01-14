@@ -237,17 +237,23 @@ public class MainActivity extends AppCompatActivity {
                 JSONParser jp = new JSONParser();
                 if(size>0){
                     List<Card> cards = new ArrayList<>(jp.readJsonStream(json));
+                    List<String> tags = new ArrayList<>();
+                    tags.add("Aggro");
+                    tags.add("Budget");
+                    mDb.addCollection(new Collection("SUPA COLLECTION 1", tags, cards));
                     for (Card card : cards) {
                         mDb.addCard(card);
                     }
                 } else {
                     //log
                 }
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             System.out.println(mDb.retrieveCards().size());
             return null;
         }
