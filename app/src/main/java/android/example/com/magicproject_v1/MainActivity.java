@@ -2,12 +2,14 @@ package android.example.com.magicproject_v1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
 import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -69,25 +71,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void init() {
-        /*SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        //SharedPreferences.Editor editor = preferences.edit();
-        if (preferences.getBoolean("first_run", false)) {
-            new parseInformation().execute();
-        } else {
-
-        }*/
         mContext = this;
         mDb = new CardDB(mContext);
-        mDb.clear();
 
         progressBarHolder = findViewById(R.id.progressBarHolder);
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if (preferences.getBoolean("first_run", true)) {
+            new parseInformation().execute();
+        }else{
+            collectionListArray.addAll(mDb.retrieveAllCollections());
+        }
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -115,34 +115,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 });
 
-        List<String> tags = new ArrayList<>();
-        tags.add("Aggro");
-        tags.add("Budget");
-        List<Card> cards = new ArrayList<>();
-        try {
-            InputStream json = mContext.getAssets().open("cards.json");
-            int size = json.available(); // verifica se o json está disponivel
-            if (size > 0) {
-                JSONParser jp = new JSONParser();
-                cards.addAll(jp.readJsonStream(json));
-            } else {
-                //log
-            }
-            for (Card card : cards) {
-                mDb.addCard(card);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mDb.addCollection(new Collection("SUPA COLLECTION 1", tags, cards));
-        mDb.addCollection(new Collection("SUPA COLLECTION 2", tags, cards));
-        mDb.addCollection(new Collection("SUPA COLLECTION 3", tags, cards));
-        mDb.addCollection(new Collection("SUPA COLLECTION 4", tags, cards));
-
-        ArrayList<Collection> results = mDb.retrieveAllCollections();
-
         Bundle newCollectionBundle = getIntent().getExtras();
         if (newCollectionBundle != null) {
             String bName = newCollectionBundle.getString("name");
@@ -151,13 +123,11 @@ public class MainActivity extends AppCompatActivity {
             if (bName != null && bTags != null) {
                 Collection c = new Collection(bName, bTags);
                 mDb.addCollection(c);
-                results.add(c);
             }
         }
 
-        collectionListArray.addAll(results);
         collectionListView = findViewById(R.id.collectionList);
-        itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray); // pls no mexer
+        itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
         collectionListView.setAdapter(itemsAdapter);
         collectionListView.setOnItemClickListener(seeCollection);
 
@@ -237,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.deleteCollection:
-                collectionListArray.remove((int) info.id);
+                collectionListArray.remove(info.position);
                 CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
                 collectionListView.setAdapter(collectionsArrayAdapter);
                 Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
@@ -254,12 +224,31 @@ public class MainActivity extends AppCompatActivity {
             super.onPreExecute();
             inAnimation = new AlphaAnimation(0f, 1f);
             inAnimation.setDuration(200);
+            progressBarHolder = findViewById(R.id.progressBarHolder);
             progressBarHolder.setAnimation(inAnimation);
             progressBarHolder.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
+            try {
+                InputStream json = mContext.getAssets().open("cards.json");
+                int size = json.available();
+                JSONParser jp = new JSONParser();
+                if(size>0){
+                    List<Card> cards = new ArrayList<>(jp.readJsonStream(json));
+                    for (Card card : cards) {
+                        mDb.addCard(card);
+                    }
+                } else {
+                    //log
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(mDb.retrieveCards().size());
             return null;
         }
 
@@ -270,7 +259,11 @@ public class MainActivity extends AppCompatActivity {
             outAnimation.setDuration(200);
             progressBarHolder.setAnimation(outAnimation);
             progressBarHolder.setVisibility(View.GONE);
-            //preferences
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("first_run", false);
+            editor.apply();
         }
 
     }

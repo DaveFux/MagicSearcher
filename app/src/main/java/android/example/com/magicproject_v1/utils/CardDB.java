@@ -10,6 +10,7 @@ import android.example.com.magicproject_v1.classes.Collection;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CardDB extends SQLiteOpenHelper {

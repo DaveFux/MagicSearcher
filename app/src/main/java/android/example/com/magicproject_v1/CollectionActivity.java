@@ -232,20 +232,12 @@ public class CollectionActivity extends AppCompatActivity {
                 String collectionName = bundle.getString("collectionName");
                 int collectionId = bundle.getInt("collectionId");
                 setTitle(collectionName != null ? collectionName : "All cards");
-                if (showAllCards) {
-                    try {
-                        InputStream json = mContext.getAssets().open("cards.json");
-                        int size = json.available();
-                        JSONParser jp = new JSONParser();
-                        cardListArray.addAll(jp.readJsonStream(json));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if(showAllCards){
+                    cardListArray.addAll(mDb.retrieveCards());
+                }else {
+                    cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
                 }
-                cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
-                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray); // pls no mexer
+                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray);
             }
             return null;
         }
