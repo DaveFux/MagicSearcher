@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 String bTags = newCollectionBundle.getString("tags");
 
                 if (bName != null && bTags != null) {
-                    //mDb.editCollection();
+                    mDb.editCollection(bCollectionId,bName,bTags);
                 }
             }
         }
