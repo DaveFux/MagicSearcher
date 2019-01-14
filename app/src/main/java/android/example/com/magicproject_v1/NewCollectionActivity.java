@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class NewCollectionActivity extends AppCompatActivity {
@@ -24,7 +25,8 @@ public class NewCollectionActivity extends AppCompatActivity {
             editTextName.setText(bundle.getString("collectionName"));
             EditText editTextTags = findViewById(R.id.editTextTags);
             editTextTags.setText(bundle.getString("collectionTags"));
-        }
+            ((Button)findViewById(R.id.button)).setText(R.string.button_edit);
+        } else ((Button)findViewById(R.id.button)).setText(R.string.button_create);
     }
 
     public void createCollection(View view) {
