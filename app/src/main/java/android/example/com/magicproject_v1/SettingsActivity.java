@@ -31,5 +31,13 @@ public class SettingsActivity extends AppCompatActivity {
             editor.putBoolean("thumbnails", isChecked);
             editor.apply();
         });
+
+        Switch manaCostSwitch = findViewById(R.id.switchManaCost);
+        manaCostSwitch.setChecked(preferences.getBoolean("manaCost", true));
+        manaCostSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("manaCost", isChecked);
+            editor.apply();
+        });
     }
 }

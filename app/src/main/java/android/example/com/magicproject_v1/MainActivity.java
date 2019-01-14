@@ -105,18 +105,6 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.addCollection:
                             startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
                             break;
-                        case R.id.updateAllCollections:
-                            collectionListArray.clear();
-                            collectionListArray.addAll(mDb.retrieveAllCollections());
-                            CollectionsArrayAdapter updateCollections = new CollectionsArrayAdapter(mContext, collectionListArray);
-                            collectionListView.setAdapter(updateCollections);
-                            break;
-                        case R.id.deleteAllCollections:
-                            mDb.deleteAllCollections();
-                            collectionListArray.clear();
-                            CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
-                            collectionListView.setAdapter(collectionsArrayAdapter);
-                            break;
                         case R.id.settings:
                             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                             break;
@@ -212,6 +200,27 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.updateAllCollections:
+                collectionListArray.clear();
+                collectionListArray.addAll(mDb.retrieveAllCollections());
+                CollectionsArrayAdapter updateCollections = new CollectionsArrayAdapter(mContext, collectionListArray);
+                collectionListView.setAdapter(updateCollections);
+                break;
+            case R.id.deleteAllCollections:
+                mDb.deleteAllCollections();
+                collectionListArray.clear();
+                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
+                collectionListView.setAdapter(collectionsArrayAdapter);
+                break;
+            case R.id.addCollection:
+                startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
+                break;
+            case R.id.settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                break;
+            case R.id.aboutUs:
+                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

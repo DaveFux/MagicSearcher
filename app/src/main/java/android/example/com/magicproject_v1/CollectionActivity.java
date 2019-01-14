@@ -100,18 +100,6 @@ public class CollectionActivity extends AppCompatActivity {
                         case R.id.addCollection:
                             startActivity(new Intent(CollectionActivity.this, NewCollectionActivity.class));
                             break;
-                        /*case R.id.updateAllCollections:
-                            collectionListArray.clear();
-                            collectionListArray.addAll(mDb.retrieveAllCollections());
-                            CollectionsArrayAdapter updateCollections = new CollectionsArrayAdapter(mContext, collectionListArray);
-                            collectionListView.setAdapter(updateCollections);
-                            break;
-                        case R.id.deleteAllCollections:
-                            mDb.deleteAllCollections();
-                            collectionListArray.clear();
-                            CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
-                            collectionListView.setAdapter(collectionsArrayAdapter);
-                            break;*/
                         case R.id.settings:
                             startActivity(new Intent(CollectionActivity.this, SettingsActivity.class));
                             break;
@@ -243,7 +231,7 @@ public class CollectionActivity extends AppCompatActivity {
                 boolean showAllCards = bundle.getBoolean("allCards");
                 String collectionName = bundle.getString("collectionName");
                 int collectionId = bundle.getInt("collectionId");
-                setTitle(collectionName);
+                setTitle(collectionName != null ? collectionName : "All cards");
                 if (showAllCards) {
                     try {
                         InputStream json = mContext.getAssets().open("cards.json");

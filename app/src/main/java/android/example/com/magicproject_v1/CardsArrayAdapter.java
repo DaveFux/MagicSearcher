@@ -59,8 +59,10 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
         }
         description.setText(strDescription);
 
-        TextView manaCost = listItem.findViewById(R.id.manaCost);
-        manaCost.setText(card.getManaCost().toString());
+        if(preferences.getBoolean("manaCost", true)) {
+            TextView manaCost = listItem.findViewById(R.id.manaCost);
+            manaCost.setText(card.getManaCost().toString());
+        }
 
         return listItem;
     }
