@@ -82,6 +82,17 @@ public class MainActivity extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        Bundle newCollectionBundle = getIntent().getExtras();
+        if (newCollectionBundle != null) {
+            String bName = newCollectionBundle.getString("name");
+            String bTags = newCollectionBundle.getString("tags");
+
+            if (bName != null && bTags != null) {
+                Collection c = new Collection(bName, bTags);
+                mDb.addCollection(c);
+            }
+        }
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (preferences.getBoolean("first_run", true)) {
             new parseInformation().execute();
@@ -114,17 +125,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     return true;
                 });
-
-        Bundle newCollectionBundle = getIntent().getExtras();
-        if (newCollectionBundle != null) {
-            String bName = newCollectionBundle.getString("name");
-            String bTags = newCollectionBundle.getString("tags");
-
-            if (bName != null && bTags != null) {
-                Collection c = new Collection(bName, bTags);
-                mDb.addCollection(c);
-            }
-        }
 
         collectionListView = findViewById(R.id.collectionList);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
