@@ -18,6 +18,7 @@
     <string name="deleteAllCollections">Delete all collections</string>
     <string name="updateAllCollections">Update all collections</string>
     <string name="deleteFromCollection">Delete from collection</string>
+    <string name="editCollection">Edit collection</string>
     <string name="deleteCollection">Delete collection</string>
     <string name="thumbnailsOption">Enable card thumbnails</string>
     <string name="settings">Settings</string>

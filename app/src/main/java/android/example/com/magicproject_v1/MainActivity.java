@@ -212,6 +212,12 @@ public class MainActivity extends AppCompatActivity {
                 collectionListView.setAdapter(collectionsArrayAdapter);
                 Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.editCollection:
+                /*collectionListArray.remove(info.position);
+                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
+                collectionListView.setAdapter(collectionsArrayAdapter);*/
+                Toast.makeText(mContext, "Item edited", Toast.LENGTH_SHORT).show();
+                return true;
             default:
                 return super.onContextItemSelected(item);
         }
