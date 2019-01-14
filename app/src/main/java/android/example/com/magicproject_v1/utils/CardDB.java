@@ -123,20 +123,20 @@ public class CardDB extends SQLiteOpenHelper {
             long id = dbw.insert(TABLE_COLLECTIONS, null, cv);
             dbw.close();
             for(Card c : collection.getCards()){
-                addCardInCollection(c, (int) id);
+                addCardInCollection(c.getId(), (int) id);
             }
             return id;
         }
         return -2;
     }
 
-    // COMPLETED
-    private long addCardInCollection(Card c, int collectionID) {
+    // TODO Fazer uma copia deste metodo
+    public long addCardInCollection(String idCard, int collectionID) {
         SQLiteDatabase dbw = this.getWritableDatabase();
         if (dbw!=null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_ID_COLLECTIONS, collectionID);
-            cv.put(COL_ID_CARDS, c.getId());
+            cv.put(COL_ID_CARDS, idCard);
             cv.put(COL_QUANTITY, 1);
 
             long id = dbw.insert(TABLE_CARDS_IN_COLLECTION, null, cv);
@@ -145,6 +145,7 @@ public class CardDB extends SQLiteOpenHelper {
         }
         return -2;
     }
+
 
     // COMPLETED
     public ArrayList<Collection> retrieveAllCollections(){
@@ -305,6 +306,7 @@ public class CardDB extends SQLiteOpenHelper {
         }
         return retorno;
     }
+
 
     public void clear(){
         SQLiteDatabase dbw = this.getWritableDatabase();

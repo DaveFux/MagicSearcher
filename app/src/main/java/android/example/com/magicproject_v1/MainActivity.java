@@ -46,11 +46,22 @@ public class MainActivity extends AppCompatActivity {
     protected ListView collectionListView;
     protected CardDB mDb;
 
+
     protected ListView.OnItemClickListener seeCollection = (parent, view, position, id) -> {
         Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
         Bundle b = new Bundle();
+        ArrayList<String> nameColl=new ArrayList<>();
+        ArrayList<Integer> idColl=new ArrayList<>();
+        for(int i=0; i<collectionListArray.size();i++){
+            nameColl.add(collectionListArray.get(i).getName());
+            System.out.println(collectionListArray.get(i).getName());
+            System.out.println(i+1);
+            idColl.add(i+1);
+        }
         b.putString("collectionName", collectionListArray.get(position).getName());
         b.putInt("collectionId", position + 1);
+        b.putIntegerArrayList("ArrayIds",idColl);
+        b.putStringArrayList("ArrayNames",nameColl);
         intent.putExtras(b);
         startActivity(intent);
     };
@@ -188,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
             case R.id.aboutUs:
-                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
+                startActivity(new Intent(MainActivity.this, Main2Activity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

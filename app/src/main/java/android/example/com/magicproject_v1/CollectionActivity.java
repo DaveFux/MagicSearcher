@@ -41,8 +41,9 @@ public class CollectionActivity extends AppCompatActivity {
 
     protected ListView.OnItemClickListener seeCard = (parent, view, position, id) -> {
         Intent intent = new Intent(CollectionActivity.this, CardViewActivity.class);
-        Bundle b = new Bundle();
+        Bundle b = bundle;
         b.putString("image", cardListArray.get(position).getImage());
+        b.putString("id", cardListArray.get(position).getId());
         intent.putExtras(b);
         startActivity(intent);
     };

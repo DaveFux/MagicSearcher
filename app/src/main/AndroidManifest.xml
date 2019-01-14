@@ -22,7 +22,11 @@
         <activity android:name=".CollectionActivity" />
         <activity android:name=".AboutUsActivity" />
         <activity android:name=".NewCollectionActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
