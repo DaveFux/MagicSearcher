@@ -191,6 +191,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 String cardId=cardListArray.get(info.position).getId();
                 builder.setTitle(cardListArray.get(info.position).getName());
                 View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.input_dialog, cardListView, false);
+                System.out.println("Ganda BAnana"+ selectedCollection);
                 mDb.addCardInCollection(cardId,selectedCollection);
                 final EditText input = viewInflated.findViewById(R.id.input);
                 spinner = viewInflated.findViewById(R.id.collectionSpinner);
@@ -217,7 +218,10 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 });
 
                 builder.show();
+                cardListArray.addAll(mDb.retrieveAllCardsInCollection(selectedCollection));
+                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray);
                 return true;
+
             case R.id.deleteFromCollection:
                 cardListArray.remove((int) info.id);
                 CardsArrayAdapter cardsArrayAdapter = new CardsArrayAdapter(mContext, cardListArray);
@@ -232,7 +236,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         selectedCollection=position;
-
     }
 
     @Override

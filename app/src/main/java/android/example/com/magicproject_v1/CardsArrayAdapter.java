@@ -56,9 +56,6 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
         Card card = cards.get(position);
         int quantity = quantities.get(card.getName());
 
-
-        //TODO: mostrar cartas repetidas
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         if(preferences.getBoolean("thumbnails", true)) {
             ImageView thumbnail = listItem.findViewById(R.id.thumbnail);

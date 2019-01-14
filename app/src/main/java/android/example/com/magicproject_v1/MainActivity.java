@@ -96,9 +96,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         if (preferences.getBoolean("first_run", true)) {
             new parseInformation().execute();
-        }else{
-            collectionListArray.addAll(mDb.retrieveAllCollections());
         }
+        collectionListArray.addAll(mDb.retrieveAllCollections());
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
