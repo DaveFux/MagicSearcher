@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -8,22 +8,43 @@
         android:layout_height="wrap_content"
         android:gravity="center">
 
-        <AutoCompleteTextView
-            android:id="@+id/input"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:gravity="center"
-            android:inputType="number" />
-
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/inputHint"
-            android:textSize="12sp"
-            android:gravity="center"
-            />
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:id="@+id/collectionSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+                android:gravity="center"
+                android:layout_centerInParent="true"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/collectionSpinner"
+                android:paddingTop="10dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/input"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:layout_centerInParent="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/input"
+                    android:gravity="center"
+                    android:text="@string/inputHint"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+        </RelativeLayout>
 
 
     </android.support.design.widget.TextInputLayout>
-</FrameLayout>
+</RelativeLayout>
