@@ -9,6 +9,7 @@ import android.example.com.magicproject_v1.utils.CardDB;
 import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -132,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (bName != null && bTags != null) {
                     mDb.editCollection(bCollectionId,bName,bTags);
+                    collectionListArray.clear();
+                    collectionListArray.addAll(mDb.retrieveAllCollections());
                 }
             }
         }
@@ -140,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
         collectionListView.setAdapter(itemsAdapter);
         collectionListView.setOnItemClickListener(seeCollection);
-
         registerForContextMenu(collectionListView);
     }
 
