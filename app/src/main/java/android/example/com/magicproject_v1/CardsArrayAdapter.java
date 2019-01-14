@@ -12,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -19,11 +22,28 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
 
     private Context mContext;
     private List<Card> cards;
+    private HashMap<String, Integer> quantities;
 
     public CardsArrayAdapter(Context context, List<Card> objects) {
         super(context, 0, objects);
         this.mContext = context;
         this.cards = objects;
+        quantities = new HashMap<>();
+        this.quantities = filterDuplicates(objects);
+    }
+
+    private HashMap<String, Integer> filterDuplicates(List<Card> cards){
+        List<Card> cardsToRemove = new ArrayList<>();
+        for (Card card : cards) {
+            if(quantities.containsKey(card.getName())){
+                quantities.replace(card.getName(), quantities.get(card.getName()) + 1);
+                cardsToRemove.add(card);
+            }else{
+                quantities.put(card.getName(), 1);
+            }
+        }
+        this.cards.removeAll(cardsToRemove);
+        return quantities;
     }
 
     @Override
@@ -34,8 +54,7 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
         }
 
         Card card = cards.get(position);
-
-        //TODO: mostrar cartas repetidas
+        int quantity = quantities.get(card.getName());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         if(preferences.getBoolean("thumbnails", true)) {
@@ -50,7 +69,7 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
         }
 
         TextView cardName = listItem.findViewById(R.id.cardName);
-        cardName.setText(card.getName());
+        cardName.setText(quantity + " x " + card.getName());
 
         TextView description = listItem.findViewById(R.id.description);
         String strDescription = card.getType();

@@ -14,6 +14,7 @@
         android:ems="10"
         android:hint="@string/edit_message"
         android:inputType="textPersonName"
+        android:descendantFocusability="blocksDescendants"
         />
 
     <EditText
@@ -27,6 +28,7 @@
         android:hint="@string/tags_message"
         android:inputType="textPersonName"
         android:layout_below="@id/editTextName"
+        android:descendantFocusability="blocksDescendants"
         />
 
     <Button

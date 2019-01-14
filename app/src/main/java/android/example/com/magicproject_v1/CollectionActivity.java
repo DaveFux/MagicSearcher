@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
 import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.AsyncTask;
@@ -25,10 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
@@ -37,7 +40,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectionActivity extends AppCompatActivity {
+public class CollectionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     protected Context mContext;
     protected ArrayList<Card> cardListArray = new ArrayList<>();
@@ -49,6 +52,10 @@ public class CollectionActivity extends AppCompatActivity {
     AlphaAnimation outAnimation;
     FrameLayout progressBarHolder;
     protected DrawerLayout mDrawerLayout;
+    protected ArrayList<Collection> collections;
+    protected ArrayList<String> collectionsName=new ArrayList<>();
+    protected  Spinner spinner;
+    protected int selectedCollection;
 
     protected ListView.OnItemClickListener seeCard = (parent, view, position, id) -> {
         Intent intent = new Intent(CollectionActivity.this, CardViewActivity.class);
@@ -73,10 +80,15 @@ public class CollectionActivity extends AppCompatActivity {
     protected void init() {
         mContext = this;
         mDb = new CardDB(mContext);
+        collections = mDb.retrieveAllCollections();
+        for (Collection item:collections) {
+            collectionsName.add(item.getName());
+        }
         cardListView = findViewById(R.id.cardList);
         progressBarHolder = findViewById(R.id.progressBarHolder);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -164,17 +176,31 @@ public class CollectionActivity extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.context_menu_cards, menu);
     }
-
+//    public void onClick(View v) {
+//        ArrayList<Integer> c =b.getIntegerArrayList("ArrayIds");
+//        mDb.addCardInCollection((b.getString("id")),c.get(0));
+//        ArrayList<Card> cartas = mDb.retrieveAllCardsInCollection(c.get(0));
+//    }
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
         switch (item.getItemId()) {
             case R.id.addToCollection:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("Title");
+                String cardId=cardListArray.get(info.position).getId();
+                builder.setTitle(cardListArray.get(info.position).getName());
                 View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.input_dialog, cardListView, false);
-
+                System.out.println("Ganda BAnana"+ selectedCollection);
+                mDb.addCardInCollection(cardId,selectedCollection);
                 final EditText input = viewInflated.findViewById(R.id.input);
+                spinner = viewInflated.findViewById(R.id.collectionSpinner);
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                        (this, android.R.layout.simple_spinner_item,
+                                collectionsName); //selected item will look like a spinner set from XML
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                        .simple_spinner_dropdown_item);
+                spinner.setAdapter(spinnerArrayAdapter);
                 builder.setView(viewInflated);
 
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -192,7 +218,10 @@ public class CollectionActivity extends AppCompatActivity {
                 });
 
                 builder.show();
+                cardListArray.addAll(mDb.retrieveAllCardsInCollection(selectedCollection));
+                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray);
                 return true;
+
             case R.id.deleteFromCollection:
                 cardListArray.remove((int) info.id);
                 CardsArrayAdapter cardsArrayAdapter = new CardsArrayAdapter(mContext, cardListArray);
@@ -202,6 +231,16 @@ public class CollectionActivity extends AppCompatActivity {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        selectedCollection=position;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     private class LoadCardsFromCollections extends AsyncTask<Void, Void, Void> {
