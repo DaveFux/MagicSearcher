@@ -117,12 +117,22 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle newCollectionBundle = getIntent().getExtras();
         if (newCollectionBundle != null) {
-            String bName = newCollectionBundle.getString("name");
-            String bTags = newCollectionBundle.getString("tags");
+            if (newCollectionBundle.getBoolean("add/edit")) {   //add
+                String bName = newCollectionBundle.getString("name");
+                String bTags = newCollectionBundle.getString("tags");
 
-            if (bName != null && bTags != null) {
-                Collection c = new Collection(bName, bTags);
-                mDb.addCollection(c);
+                if (bName != null && bTags != null) {
+                    Collection c = new Collection(bName, bTags);
+                    mDb.addCollection(c);
+                }
+            } else {    //edit
+                int bCollectionId = newCollectionBundle.getInt("collectionId");
+                String bName = newCollectionBundle.getString("name");
+                String bTags = newCollectionBundle.getString("tags");
+
+                if (bName != null && bTags != null) {
+                    //mDb.editCollection();
+                }
             }
         }
 
@@ -213,10 +223,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.editCollection:
-                /*collectionListArray.remove(info.position);
-                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
-                collectionListView.setAdapter(collectionsArrayAdapter);*/
-                Toast.makeText(mContext, "Item edited", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, NewCollectionActivity.class);
+                Bundle b = new Bundle();
+                b.putInt("collectionId", info.position + 1);
+                b.putString("collectionName", collectionListArray.get(info.position).getName());
+                b.putString("collectionTags", collectionListArray.get(info.position).getTags());
+                intent.putExtras(b);
+                startActivity(intent);
                 return true;
             default:
                 return super.onContextItemSelected(item);
