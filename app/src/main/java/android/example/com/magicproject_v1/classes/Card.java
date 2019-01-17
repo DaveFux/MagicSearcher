@@ -1,6 +1,7 @@
 package android.example.com.magicproject_v1.classes;
 
 import android.example.com.magicproject_v1.enums.Rarity;
+import android.graphics.Bitmap;
 
 public class Card {
 
@@ -15,12 +16,13 @@ public class Card {
     protected String oracleText;
     protected Mana manaCost;
     protected String image;
-    protected String thumbnail;
+    protected String thumbnailURL;
+    protected Bitmap thumbnail;
 
     public Card(String id, String name, String type,
                 int power, int toughness, String expansionName,
                 Rarity rarity, String flavorText, String oracleText,
-                Mana manaCost, String image, String thumbnail) {
+                Mana manaCost, String image, String thumbnailURL) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -32,12 +34,12 @@ public class Card {
         this.oracleText = oracleText;
         this.manaCost = manaCost;
         this.image = image;
-        this.thumbnail = thumbnail;
+        this.thumbnailURL = thumbnailURL;
     }
 
     public Card(String id, String name, String type, String manaCost,
                 String flavorText, String oracleText, String expansionName, String rarity,
-                int power, int toughness, String image, String thumbnail) {
+                int power, int toughness, String image, String thumbnailURL) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -49,7 +51,7 @@ public class Card {
         this.oracleText = oracleText;
         this.manaCost = new Mana(manaCost);
         this.image = image;
-        this.thumbnail = thumbnail;
+        this.thumbnailURL = thumbnailURL;
     }
 
     public Card(Card card) {
@@ -64,7 +66,7 @@ public class Card {
         this.oracleText = card.getOracleText();
         this.manaCost = card.getManaCost();
         this.image = card.getImage();
-        this.thumbnail = card.getThumbnail();
+        this.thumbnailURL = card.getThumbnailURL();
     }
 
     private Rarity rarityFromString(String rarity) {
@@ -159,11 +161,19 @@ public class Card {
         this.image = image;
     }
 
-    public String getThumbnail() {
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
+    }
+
+    public Bitmap getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(String thumbnail) {
+    public void setThumbnail(Bitmap thumbnail) {
         this.thumbnail = thumbnail;
     }
 

@@ -10,7 +10,6 @@ import android.example.com.magicproject_v1.classes.Collection;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class CardDB extends SQLiteOpenHelper {
@@ -106,7 +105,7 @@ public class CardDB extends SQLiteOpenHelper {
             cv.put(COL_POWER, card.getPower());
             cv.put(COL_TOUGHNESS, card.getToughness());
             cv.put(COL_IMAGE, card.getImage());
-            cv.put(COL_THUMBNAIL, card.getThumbnail());
+            cv.put(COL_THUMBNAIL, card.getThumbnailURL());
             long id = dbw.insert(TABLE_CARDS, null, cv);
             dbw.close();
             return id;
