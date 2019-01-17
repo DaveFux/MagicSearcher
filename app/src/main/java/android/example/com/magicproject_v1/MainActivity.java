@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         if (preferences.getBoolean("first_run", true)) {
             new parseInformation().execute();
         }
-        collectionListArray.addAll(mDb.retrieveAllCollections());
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle newCollectionBundle = getIntent().getExtras();
         if (newCollectionBundle != null) {
-            if (newCollectionBundle.getBoolean("add/edit")) {   //add
+            if (newCollectionBundle.getBoolean("add")) {   //add
                 String bName = newCollectionBundle.getString("name");
                 String bTags = newCollectionBundle.getString("tags");
 
@@ -126,19 +125,19 @@ public class MainActivity extends AppCompatActivity {
                     Collection c = new Collection(bName, bTags);
                     mDb.addCollection(c);
                 }
-            } else {    //edit
+            } else {
                 int bCollectionId = newCollectionBundle.getInt("collectionId");
                 String bName = newCollectionBundle.getString("name");
                 String bTags = newCollectionBundle.getString("tags");
 
                 if (bName != null && bTags != null) {
                     mDb.editCollection(bCollectionId,bName,bTags);
-                    collectionListArray.clear();
-                    collectionListArray.addAll(mDb.retrieveAllCollections());
                 }
             }
+
         }
 
+        collectionListArray.addAll(mDb.retrieveAllCollections());
         collectionListView = findViewById(R.id.collectionList);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
         collectionListView.setAdapter(itemsAdapter);

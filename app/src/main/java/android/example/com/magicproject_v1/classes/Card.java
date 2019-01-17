@@ -38,7 +38,6 @@ public class Card {
     public Card(String id, String name, String type, String manaCost,
                 String flavorText, String oracleText, String expansionName, String rarity,
                 int power, int toughness, String image, String thumbnail) {
-        System.out.println(manaCost);
         this.id = id;
         this.name = name;
         this.type = type;
