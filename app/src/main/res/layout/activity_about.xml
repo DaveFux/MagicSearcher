@@ -4,24 +4,35 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/textViewAboutTitle"
+    <FrameLayout
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/aboutUs"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="10dp"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aboutUs"
+                android:textColor="#000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+        </android.support.v7.widget.Toolbar>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/textViewAbout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewAboutTitle"
+        android:layout_below="@id/content_frame"
         android:layout_marginTop="10dp"
         android:text="@string/AboutMainText"
+        android:layout_marginStart="10dp"
         android:textSize="16sp" />
 
     <TextView
@@ -31,5 +42,6 @@
         android:layout_below="@id/textViewAbout"
         android:textSize="16sp"
         android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
         android:text="@string/AboutAutores"/>
 </RelativeLayout>
