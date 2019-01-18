@@ -219,11 +219,14 @@ public class CardDB extends SQLiteOpenHelper {
         int count = 0;
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
-            String query = "select count(*) from " + TABLE_CARDS_IN_COLLECTION
+            String query = "select "+COL_QUANTITY+" from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
             if(cursor.moveToFirst()){
-                count = cursor.getInt(0);
+                while(!cursor.isAfterLast()) {
+                    count += cursor.getInt(0);
+                    cursor.moveToNext();
+                }
             }
             dbr.close();
             cursor.close();
@@ -236,13 +239,17 @@ public class CardDB extends SQLiteOpenHelper {
         ArrayList<Card> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
-            String query = "select " + COL_ID_CARDS + " from " + TABLE_CARDS_IN_COLLECTION
+            String query = "select " + COL_ID_CARDS + ","+COL_QUANTITY+" from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
             if(cursor.moveToFirst()){
                 while(!cursor.isAfterLast()) {
                     String cardId = cursor.getString(0);
-                    retorno.add(retrieveCard(cardId));
+                    int cardQuant = cursor.getInt(1);
+                    Card c = retrieveCard(cardId);
+                    for(int i=0;i<cardQuant;i++){
+                        retorno.add(retrieveCard(cardId));
+                    }
                     cursor.moveToNext();
                 }
             }
