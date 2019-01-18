@@ -281,7 +281,7 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    private Card retrieveCard(String cardID){
+    public Card retrieveCard(String cardID){
         Card retorno = null;
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {

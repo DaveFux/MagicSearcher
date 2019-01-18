@@ -294,6 +294,8 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                             cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
                             itemsAdapter.notifyDataSetChanged();
                         }
+                        Snackbar snackbar = Snackbar.make(mContext, "Added "+mNumberOfCards+" of "+mDb.retrieveCard(cardId).getName()+"  to the "+mDb.retrieveAllCollections().get(collectionID-1).getName(), Snackbar.LENGTH_LONG);
+                        snackbar.show();
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
