@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/groupTop"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/searchCards"
             android:title="@string/searchCards" />
@@ -8,9 +11,21 @@
             android:id="@+id/addCollection"
             android:title="@string/addCollection" />
 
+    </group>
+
+    <group
+        android:id="@+id/groupMiddle"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/randomCard"
             android:title="@string/randomCard" />
+
+    </group>
+
+    <group
+        android:id="@+id/groupBottom"
+        android:checkableBehavior="single">
 
         <item
             android:id="@+id/settings"
@@ -19,5 +34,9 @@
         <item
             android:id="@+id/aboutUs"
             android:title="@string/aboutUs" />
+
+        <item
+            android:id="@+id/howToUse"
+            android:title="@string/howToUse" />
     </group>
 </menu>
