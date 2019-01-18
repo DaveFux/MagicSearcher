@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class NewCollectionActivity extends AppCompatActivity {
 
-    Bundle bundle;
+    protected Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
