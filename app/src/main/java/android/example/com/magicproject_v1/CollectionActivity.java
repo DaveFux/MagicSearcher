@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
-import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.AsyncTask;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -24,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -35,27 +32,25 @@ import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Pattern;
 
 public class CollectionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     protected Context mContext;
+    protected ArrayList<Card> allCards = new ArrayList<>();
     protected ArrayList<Card> cardListArray = new ArrayList<>();
     protected CardsArrayAdapter itemsAdapter;
     protected ListView cardListView;
     protected CardDB mDb;
-    Bundle bundle;
-    AlphaAnimation inAnimation;
-    AlphaAnimation outAnimation;
-    FrameLayout progressBarHolder;
+    protected Bundle bundle;
+    protected AlphaAnimation inAnimation;
+    protected AlphaAnimation outAnimation;
+    protected FrameLayout progressBarHolder;
     protected DrawerLayout mDrawerLayout;
     protected ArrayList<Collection> collections;
-    protected ArrayList<String> collectionsName=new ArrayList<>();
-    protected  Spinner spinner;
+    protected ArrayList<String> collectionsName = new ArrayList<>();
+    protected Spinner spinner;
     protected int selectedCollection;
 
     protected ListView.OnItemClickListener seeCard = (parent, view, position, id) -> {
@@ -82,14 +77,12 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         mContext = this;
         mDb = new CardDB(mContext);
         collections = mDb.retrieveAllCollections();
-        for (Collection item:collections) {
+        for (Collection item : collections) {
             collectionsName.add(item.getName());
         }
         cardListView = findViewById(R.id.cardList);
         progressBarHolder = findViewById(R.id.progressBarHolder);
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -123,7 +116,8 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     return true;
                 });
         bundle = getIntent().getExtras();
-
+        String collectionName = bundle.getString("collectionName");
+        setTitle(collectionName != null ? collectionName : "All cards");
         new LoadCardsFromCollections().execute();
 
         cardListView.setOnItemClickListener(seeCard);
@@ -147,14 +141,104 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
             @Override
             public boolean onQueryTextChange(String newText) {
                 String str = newText.toLowerCase();
-                List<Card> filteredArray = new ArrayList<>();
-                for (Card card : cardListArray) {
-                    if (card.getName().toLowerCase().contains(str)) {
-                        filteredArray.add(card);
+                cardListArray.clear();
+                if (str.contains(":")) {
+                    String[] strAfterSplit = str.split(":");
+                    if (strAfterSplit.length > 1) {
+                        switch (strAfterSplit[0].toLowerCase()) {
+                            case "mc":
+                                for (Card card : allCards) {
+                                    if (card.getManaCost().toString().toLowerCase().contains(strAfterSplit[1])) {
+                                        cardListArray.add(card);
+                                    }
+                                }
+                                break;
+                            case "type":
+                                for (Card card : allCards) {
+                                    if (card.getType().toLowerCase().contains(strAfterSplit[1])) {
+                                        cardListArray.add(card);
+                                    }
+                                }
+                                break;
+                            case "exp":
+                                for (Card card : allCards) {
+                                    if (card.getExpansionName().toLowerCase().contains(strAfterSplit[1])) {
+                                        cardListArray.add(card);
+                                    }
+                                }
+                                break;
+                            case "power":
+                                if (!Pattern.matches("[a-zA-Z]+", strAfterSplit[1])) {
+                                    switch (strAfterSplit[1].charAt(0)) {
+                                        case '>':
+                                            if (strAfterSplit[1].length() > 1) {
+                                                for (Card card : allCards) {
+                                                    if (card.getPower() > Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                        cardListArray.add(card);
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case '<':
+                                            if (strAfterSplit[1].length() > 1) {
+                                                for (Card card : allCards) {
+                                                    if (card.getPower() < Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                        cardListArray.add(card);
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            for (Card card : allCards) {
+                                                if (card.getPower() == Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                    cardListArray.add(card);
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                                break;
+                            case "tgh":
+                                if (!Pattern.matches("[a-zA-Z]+", strAfterSplit[1])) {
+                                    switch (strAfterSplit[1].charAt(0)) {
+                                        case '>':
+                                            if (strAfterSplit[1].length() > 1) {
+                                                for (Card card : allCards) {
+                                                    if (card.getToughness() > Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                        cardListArray.add(card);
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case '<':
+                                            if (strAfterSplit[1].length() > 1) {
+                                                for (Card card : allCards) {
+                                                    if (card.getToughness() < Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                        cardListArray.add(card);
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        default:
+                                            for (Card card : allCards) {
+                                                if (card.getToughness() == Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                    cardListArray.add(card);
+                                                }
+                                            }
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                } else {
+                    for (Card card : allCards) {
+                        if (card.getName().toLowerCase().contains(str)) {
+                            cardListArray.add(card);
+                        }
                     }
                 }
-                CardsArrayAdapter filteredAdapter = new CardsArrayAdapter(mContext, filteredArray);
-                cardListView.setAdapter(filteredAdapter);
+                itemsAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -177,11 +261,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.context_menu_cards, menu);
     }
-//    public void onClick(View v) {
-//        ArrayList<Integer> c =b.getIntegerArrayList("ArrayIds");
-//        mDb.addCardInCollection((b.getString("id")),c.get(0));
-//        ArrayList<Card> cartas = mDb.retrieveAllCardsInCollection(c.get(0));
-//    }
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -189,11 +269,9 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         switch (item.getItemId()) {
             case R.id.addToCollection:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                String cardId=cardListArray.get(info.position).getId();
+                String cardId = cardListArray.get(info.position).getId();
                 builder.setTitle(cardListArray.get(info.position).getName());
                 View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.input_dialog, cardListView, false);
-                System.out.println("Ganda BAnana"+ selectedCollection);
-                mDb.addCardInCollection(cardId,selectedCollection);
                 final EditText input = viewInflated.findViewById(R.id.input);
                 spinner = viewInflated.findViewById(R.id.collectionSpinner);
                 ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
@@ -209,8 +287,13 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         int mNumberOfCards = Integer.parseInt(input.getText().toString());
-                        Snackbar snackbar = Snackbar.make(viewInflated, "Added  to the ", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        int collectionID = spinner.getSelectedItemPosition() + 1;
+                        mDb.addCardInCollection(cardId, collectionID, mNumberOfCards);
+                        if(bundle.getString("collectionName") != null){
+                            cardListArray.clear();
+                            cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
+                            itemsAdapter.notifyDataSetChanged();
+                        }
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -219,16 +302,12 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         dialog.cancel();
                     }
                 });
-
                 builder.show();
-                cardListArray.addAll(mDb.retrieveAllCardsInCollection(selectedCollection));
-                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray);
                 return true;
 
             case R.id.deleteFromCollection:
                 cardListArray.remove((int) info.id);
-                CardsArrayAdapter cardsArrayAdapter = new CardsArrayAdapter(mContext, cardListArray);
-                cardListView.setAdapter(cardsArrayAdapter);
+                itemsAdapter.notifyDataSetChanged();
                 Toast.makeText(mContext, "Item deleted from collection", Toast.LENGTH_SHORT).show();
                 return true;
             default:
@@ -238,13 +317,14 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        selectedCollection=position;
+        selectedCollection = position;
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
 
     private class LoadCardsFromCollections extends AsyncTask<Void, Void, Void> {
 
@@ -271,14 +351,13 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         protected Void doInBackground(Void... params) {
             if (bundle != null) {
                 boolean showAllCards = bundle.getBoolean("allCards");
-                String collectionName = bundle.getString("collectionName");
                 int collectionId = bundle.getInt("collectionId");
-                setTitle(collectionName != null ? collectionName : "All cards");
-                if(showAllCards){
+                if (showAllCards) {
                     cardListArray.addAll(mDb.retrieveCards());
-                }else {
+                } else {
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
                 }
+                allCards.addAll(cardListArray);
                 itemsAdapter = new CardsArrayAdapter(mContext, cardListArray);
             }
             return null;

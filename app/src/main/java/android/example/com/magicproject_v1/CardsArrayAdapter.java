@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.utils.ImageLoader;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class CardsArrayAdapter extends ArrayAdapter<Card> {
 
+    static class ViewHolder{
+        ImageView cardThumbnail;
+        TextView cardNameTextView;
+        TextView cardDescriptionTextView;
+        TextView cardManaCostTextView;
+    }
+
+    private SharedPreferences preferences;
     private Context mContext;
     private List<Card> cards;
     private HashMap<String, Integer> quantities;
@@ -30,6 +38,7 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
         this.cards = objects;
         quantities = new HashMap<>();
         this.quantities = filterDuplicates(objects);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     private HashMap<String, Integer> filterDuplicates(List<Card> cards){
@@ -48,19 +57,35 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder view;
         View listItem = convertView;
         if (listItem == null) {
+            view = new ViewHolder();
             listItem = LayoutInflater.from(mContext).inflate(R.layout.list_cards, parent, false);
+
+            view.cardThumbnail = listItem.findViewById(R.id.thumbnail);
+            view.cardNameTextView = listItem.findViewById(R.id.cardName);
+            view.cardDescriptionTextView = listItem.findViewById(R.id.description);
+            view.cardManaCostTextView = listItem.findViewById(R.id.manaCost);
+
+            listItem.setTag(view);
+        } else {
+            view = (ViewHolder) convertView.getTag();
         }
 
         Card card = cards.get(position);
         int quantity = quantities.get(card.getName());
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
         if(preferences.getBoolean("thumbnails", true)) {
-            ImageView thumbnail = listItem.findViewById(R.id.thumbnail);
             try {
-                thumbnail.setImageBitmap(new ImageLoader().execute(card.getThumbnail()).get());
+                if(card.getThumbnail() != null){
+                    view.cardThumbnail.setImageBitmap(card.getThumbnail());
+                }else{
+                    Bitmap thumbnail = new ImageLoader().execute(card.getThumbnailURL()).get();
+                    card.setThumbnail(thumbnail);
+                    view.cardThumbnail.setImageBitmap(thumbnail);
+                }
             } catch (ExecutionException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
@@ -68,19 +93,16 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
             }
         }
 
-        TextView cardName = listItem.findViewById(R.id.cardName);
-        cardName.setText(quantity + " x " + card.getName());
+        view.cardNameTextView.setText(quantity + " x " + card.getName());
 
-        TextView description = listItem.findViewById(R.id.description);
         String strDescription = card.getType();
         if(card.getType().contains("Creature")){
             strDescription += " (" + card.getPower() + "/" + card.getToughness() + ")";
         }
-        description.setText(strDescription);
+        view.cardDescriptionTextView.setText(strDescription);
 
         if(preferences.getBoolean("manaCost", true)) {
-            TextView manaCost = listItem.findViewById(R.id.manaCost);
-            manaCost.setText(card.getManaCost().toString());
+            view.cardManaCostTextView.setText(card.getManaCost().toString());
         }
 
         return listItem;

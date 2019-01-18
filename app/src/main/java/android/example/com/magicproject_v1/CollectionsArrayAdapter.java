@@ -12,6 +12,12 @@ import java.util.List;
 
 public class CollectionsArrayAdapter extends ArrayAdapter<Collection> {
 
+    static class ViewHolder{
+        TextView collectionNameTextView;
+        TextView collectionTagsTextView;
+        TextView collectionNumberCardsTextView;
+    }
+
     private Context mContext;
     private List<Collection> collections;
 
@@ -23,21 +29,28 @@ public class CollectionsArrayAdapter extends ArrayAdapter<Collection> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder view;
         View listItem = convertView;
         if(listItem == null){
+            view = new ViewHolder();
             listItem = LayoutInflater.from(mContext).inflate(R.layout.list_collection, parent,false);
+
+            view.collectionNameTextView = listItem.findViewById(R.id.collectionName);
+            view.collectionTagsTextView = listItem.findViewById(R.id.tags);
+            view.collectionNumberCardsTextView = listItem.findViewById(R.id.numberOfCards);
+
+            listItem.setTag(view);
+        } else {
+            view = (CollectionsArrayAdapter.ViewHolder) convertView.getTag();
         }
 
         Collection collection = collections.get(position);
 
-        TextView collectionName = listItem.findViewById(R.id.collectionName);
-        collectionName.setText(collection.getName());
+        view.collectionNameTextView.setText(collection.getName());
 
-        TextView tags = listItem.findViewById(R.id.tags);
-        tags.setText(collection.getTags());
+        view.collectionTagsTextView.setText(collection.getTags());
 
-        TextView totalNumberOfCards = listItem.findViewById(R.id.numberOfCards);
-        totalNumberOfCards.setText("Cards: " + collection.getNumberOfCards());
+        view.collectionNumberCardsTextView.setText("Cards: " + collection.getNumberOfCards());
 
         return listItem;
     }

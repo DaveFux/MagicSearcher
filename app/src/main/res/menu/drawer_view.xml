@@ -1,19 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/groupTop"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/searchCards"
+            android:icon="@drawable/ic_dehaze_black"
             android:title="@string/searchCards" />
         <item
             android:id="@+id/addCollection"
+            android:icon="@drawable/ic_add_black"
             android:title="@string/addCollection" />
+
+    </group>
+
+    <group
+        android:id="@+id/groupMiddle"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/randomCard"
+            android:icon="@drawable/ic_shuffle_black"
+            android:title="@string/randomCard" />
+
+    </group>
+
+    <group
+        android:id="@+id/groupBottom"
+        android:checkableBehavior="single">
 
         <item
             android:id="@+id/settings"
+            android:icon="@drawable/ic_settings_black"
             android:title="@string/settings" />
 
         <item
             android:id="@+id/aboutUs"
+            android:icon="@drawable/ic_view_headline_black"
             android:title="@string/aboutUs" />
+
+        <item
+            android:id="@+id/howToUse"
+            android:icon="@drawable/ic_view_headline_black"
+            android:title="@string/howToUse" />
     </group>
 </menu>

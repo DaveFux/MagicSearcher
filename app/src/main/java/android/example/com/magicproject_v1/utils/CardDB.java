@@ -10,7 +10,6 @@ import android.example.com.magicproject_v1.classes.Collection;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class CardDB extends SQLiteOpenHelper {
@@ -106,7 +105,7 @@ public class CardDB extends SQLiteOpenHelper {
             cv.put(COL_POWER, card.getPower());
             cv.put(COL_TOUGHNESS, card.getToughness());
             cv.put(COL_IMAGE, card.getImage());
-            cv.put(COL_THUMBNAIL, card.getThumbnail());
+            cv.put(COL_THUMBNAIL, card.getThumbnailURL());
             long id = dbw.insert(TABLE_CARDS, null, cv);
             dbw.close();
             return id;
@@ -153,7 +152,21 @@ public class CardDB extends SQLiteOpenHelper {
             cv.put(COL_ID_COLLECTIONS, collectionID);
             cv.put(COL_ID_CARDS, c);
             cv.put(COL_QUANTITY, 1);
+            long id = dbw.insert(TABLE_CARDS_IN_COLLECTION, null, cv);
+            dbw.close();
+            return id;
+        }
+        return -2;
+    }
 
+    // COMPLETED
+    public long addCardInCollection(String c, int collectionID, int quantity) {
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw!=null) {
+            ContentValues cv = new ContentValues();
+            cv.put(COL_ID_COLLECTIONS, collectionID);
+            cv.put(COL_ID_CARDS, c);
+            cv.put(COL_QUANTITY, quantity);
             long id = dbw.insert(TABLE_CARDS_IN_COLLECTION, null, cv);
             dbw.close();
             return id;
@@ -204,11 +217,14 @@ public class CardDB extends SQLiteOpenHelper {
         int count = 0;
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
-            String query = "select count(*) from " + TABLE_CARDS_IN_COLLECTION
+            String query = "select "+COL_QUANTITY+" from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
             if(cursor.moveToFirst()){
-                count = cursor.getInt(0);
+                while(!cursor.isAfterLast()) {
+                    count += cursor.getInt(0);
+                    cursor.moveToNext();
+                }
             }
             dbr.close();
             cursor.close();
@@ -221,13 +237,17 @@ public class CardDB extends SQLiteOpenHelper {
         ArrayList<Card> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr!=null) {
-            String query = "select " + COL_ID_CARDS + " from " + TABLE_CARDS_IN_COLLECTION
+            String query = "select " + COL_ID_CARDS + ","+COL_QUANTITY+" from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
             if(cursor.moveToFirst()){
                 while(!cursor.isAfterLast()) {
                     String cardId = cursor.getString(0);
-                    retorno.add(retrieveCard(cardId));
+                    int cardQuant = cursor.getInt(1);
+                    Card c = retrieveCard(cardId);
+                    for(int i=0;i<cardQuant;i++){
+                        retorno.add(retrieveCard(cardId));
+                    }
                     cursor.moveToNext();
                 }
             }

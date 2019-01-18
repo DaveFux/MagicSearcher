@@ -9,7 +9,6 @@ import android.example.com.magicproject_v1.utils.CardDB;
 import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,23 +36,16 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    /* TODO:
-     *
-     *   MainActivity, more like SlowActivity
-     *   imensos problemas de performance para dar fix
-     *   ler mensagens do android durante a execuçao
-     *
-     */
-
     protected Context mContext;
+    protected ArrayList<Collection> allCollections = new ArrayList<>();
     protected ArrayList<Collection> collectionListArray = new ArrayList<>();
     protected CollectionsArrayAdapter itemsAdapter;
     protected ListView collectionListView;
     protected CardDB mDb;
     protected DrawerLayout mDrawerLayout;
-    AlphaAnimation inAnimation;
-    AlphaAnimation outAnimation;
-    FrameLayout progressBarHolder;
+    protected AlphaAnimation inAnimation;
+    protected AlphaAnimation outAnimation;
+    protected FrameLayout progressBarHolder;
 
     protected ListView.OnItemClickListener seeCollection = (parent, view, position, id) -> {
         Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
@@ -69,7 +60,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         init();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        collectionListArray.clear();
+        collectionListArray.addAll(mDb.retrieveAllCollections());
+        itemsAdapter.notifyDataSetChanged();
     }
 
     protected void init() {
@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         if (preferences.getBoolean("first_run", true)) {
             new parseInformation().execute();
         }
-        collectionListArray.addAll(mDb.retrieveAllCollections());
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
@@ -103,6 +102,15 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtras(b);
                             startActivity(intent);
                             break;
+                        case R.id.randomCard:
+                            System.out.println("OOF");
+                            Intent randomCardIntent = new Intent(MainActivity.this, CardViewActivity.class);
+                            Bundle randomCardBundle = new Bundle();
+                            Card c = mDb.retrieveCard();
+                            randomCardBundle.putString("image", c.getImage());
+                            randomCardIntent.putExtras(randomCardBundle);
+                            startActivity(randomCardIntent);
+                            break;
                         case R.id.addCollection:
                             startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
                             break;
@@ -112,13 +120,15 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.aboutUs:
                             startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                             break;
+                        case R.id.howToUse:
+                            startActivity(new Intent(MainActivity.this, HowToUseActivity.class));
                     }
                     return true;
                 });
 
         Bundle newCollectionBundle = getIntent().getExtras();
         if (newCollectionBundle != null) {
-            if (newCollectionBundle.getBoolean("add/edit")) {   //add
+            if (newCollectionBundle.getBoolean("add")) {   //add
                 String bName = newCollectionBundle.getString("name");
                 String bTags = newCollectionBundle.getString("tags");
 
@@ -126,19 +136,20 @@ public class MainActivity extends AppCompatActivity {
                     Collection c = new Collection(bName, bTags);
                     mDb.addCollection(c);
                 }
-            } else {    //edit
+            } else {
                 int bCollectionId = newCollectionBundle.getInt("collectionId");
                 String bName = newCollectionBundle.getString("name");
                 String bTags = newCollectionBundle.getString("tags");
 
                 if (bName != null && bTags != null) {
-                    mDb.editCollection(bCollectionId,bName,bTags);
-                    collectionListArray.clear();
-                    collectionListArray.addAll(mDb.retrieveAllCollections());
+                    mDb.editCollection(bCollectionId, bName, bTags);
                 }
             }
+
         }
 
+        collectionListArray.addAll(mDb.retrieveAllCollections());
+        allCollections.addAll(collectionListArray);
         collectionListView = findViewById(R.id.collectionList);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
         collectionListView.setAdapter(itemsAdapter);
@@ -162,14 +173,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 String str = newText.toLowerCase();
-                List<Collection> filteredArray = new ArrayList<>();
-                for (Collection collection : collectionListArray) {
-                    if (collection.getName().toLowerCase().contains(str)) {
-                        filteredArray.add(collection);
+                if (str.contains(":")) {
+                    collectionListArray.clear();
+                    String[] strAfterSplit = str.split(":");
+                    if (strAfterSplit.length > 1) {
+                        switch (strAfterSplit[0].toLowerCase()) {
+                            case "tags":
+                                for (Collection collection : allCollections) {
+                                    if (collection.getTags().toLowerCase().contains(strAfterSplit[1])) {
+                                        collectionListArray.add(collection);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                } else {
+                    for (Collection collection : allCollections) {
+                        if (collection.getName().toLowerCase().contains(str)) {
+                            collectionListArray.add(collection);
+                        }
                     }
                 }
-                CollectionsArrayAdapter filteredAdapter = new CollectionsArrayAdapter(mContext, filteredArray);
-                collectionListView.setAdapter(filteredAdapter);
+                itemsAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -182,17 +207,10 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.updateAllCollections:
-                collectionListArray.clear();
-                collectionListArray.addAll(mDb.retrieveAllCollections());
-                CollectionsArrayAdapter updateCollections = new CollectionsArrayAdapter(mContext, collectionListArray);
-                collectionListView.setAdapter(updateCollections);
-                break;
             case R.id.deleteAllCollections:
                 mDb.deleteAllCollections();
                 collectionListArray.clear();
-                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
-                collectionListView.setAdapter(collectionsArrayAdapter);
+                itemsAdapter.notifyDataSetChanged();
                 break;
             case R.id.addCollection:
                 startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
@@ -211,7 +229,6 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.context_menu_collections, menu);
-
     }
 
     @Override
@@ -220,8 +237,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.deleteCollection:
                 collectionListArray.remove(info.position);
-                CollectionsArrayAdapter collectionsArrayAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
-                collectionListView.setAdapter(collectionsArrayAdapter);
+                itemsAdapter.notifyDataSetChanged();
                 Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.editCollection:
@@ -256,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 InputStream json = mContext.getAssets().open("cards.json");
                 int size = json.available();
                 JSONParser jp = new JSONParser();
-                if(size>0){
+                if (size > 0) {
                     List<Card> cards = new ArrayList<>(jp.readJsonStream(json));
                     List<String> tags = new ArrayList<>();
                     tags.add("Aggro");
@@ -274,8 +290,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            System.out.println(mDb.retrieveCards().size());
             return null;
         }
 
