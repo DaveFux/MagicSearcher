@@ -16,11 +16,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -60,7 +62,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         init();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        collectionListArray.clear();
+        collectionListArray.addAll(mDb.retrieveAllCollections());
+        itemsAdapter.notifyDataSetChanged();
     }
 
     protected void init() {
@@ -92,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
                             b.putBoolean("allCards", true);
                             intent.putExtras(b);
                             startActivity(intent);
+                            break;
+                        case R.id.randomCard:
+                            System.out.println("OOF");
+                            Intent randomCardIntent = new Intent(MainActivity.this, CardViewActivity.class);
+                            Bundle randomCardBundle = new Bundle();
+                            Card c = mDb.retrieveCard();
+                            randomCardBundle.putString("image", c.getImage());
+                            randomCardIntent.putExtras(randomCardBundle);
+                            startActivity(randomCardIntent);
                             break;
                         case R.id.addCollection:
                             startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
@@ -187,11 +207,6 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.updateAllCollections:
-                collectionListArray.clear();
-                collectionListArray.addAll(mDb.retrieveAllCollections());
-                itemsAdapter.notifyDataSetChanged();
-                break;
             case R.id.deleteAllCollections:
                 mDb.deleteAllCollections();
                 collectionListArray.clear();

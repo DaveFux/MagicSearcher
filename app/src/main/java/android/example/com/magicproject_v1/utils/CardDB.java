@@ -161,6 +161,22 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
+    public long addCardInCollection(String c, int collectionID, int quantity) {
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw!=null) {
+            ContentValues cv = new ContentValues();
+            cv.put(COL_ID_COLLECTIONS, collectionID);
+            cv.put(COL_ID_CARDS, c);
+            cv.put(COL_QUANTITY, quantity);
+
+            long id = dbw.insert(TABLE_CARDS_IN_COLLECTION, null, cv);
+            dbw.close();
+            return id;
+        }
+        return -2;
+    }
+
+    // COMPLETED
     public ArrayList<Collection> retrieveAllCollections(){
         return retrieveAllCollections("");
     }

@@ -272,8 +272,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 String cardId = cardListArray.get(info.position).getId();
                 builder.setTitle(cardListArray.get(info.position).getName());
                 View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.input_dialog, cardListView, false);
-                System.out.println("Ganda BAnana" + selectedCollection);
-                mDb.addCardInCollection(cardId, selectedCollection);
                 final EditText input = viewInflated.findViewById(R.id.input);
                 spinner = viewInflated.findViewById(R.id.collectionSpinner);
                 ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
@@ -289,6 +287,13 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         int mNumberOfCards = Integer.parseInt(input.getText().toString());
+                        int collectionID = spinner.getSelectedItemPosition() + 1;
+                        mDb.addCardInCollection(cardId, collectionID, mNumberOfCards);
+                        if(bundle.getString("collectionName") != null){
+                            cardListArray.clear();
+                            cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
+                            itemsAdapter.notifyDataSetChanged();
+                        }
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -299,8 +304,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 });
 
                 builder.show();
-                cardListArray.addAll(mDb.retrieveAllCardsInCollection(selectedCollection));
-                itemsAdapter.notifyDataSetChanged();
                 return true;
 
             case R.id.deleteFromCollection:
