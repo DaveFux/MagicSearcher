@@ -197,7 +197,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                                     }
                                 }
                                 break;
-                            case "toughness":
+                            case "tgh":
                                 if (!Pattern.matches("[a-zA-Z]+", strAfterSplit[1])) {
                                     switch (strAfterSplit[1].charAt(0)) {
                                         case '>':

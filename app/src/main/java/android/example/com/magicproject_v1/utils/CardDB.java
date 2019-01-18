@@ -152,7 +152,6 @@ public class CardDB extends SQLiteOpenHelper {
             cv.put(COL_ID_COLLECTIONS, collectionID);
             cv.put(COL_ID_CARDS, c);
             cv.put(COL_QUANTITY, 1);
-
             long id = dbw.insert(TABLE_CARDS_IN_COLLECTION, null, cv);
             dbw.close();
             return id;
@@ -168,7 +167,6 @@ public class CardDB extends SQLiteOpenHelper {
             cv.put(COL_ID_COLLECTIONS, collectionID);
             cv.put(COL_ID_CARDS, c);
             cv.put(COL_QUANTITY, quantity);
-
             long id = dbw.insert(TABLE_CARDS_IN_COLLECTION, null, cv);
             dbw.close();
             return id;
