@@ -83,7 +83,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         progressBarHolder = findViewById(R.id.progressBarHolder);
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -302,7 +301,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         dialog.cancel();
                     }
                 });
-
                 builder.show();
                 return true;
 

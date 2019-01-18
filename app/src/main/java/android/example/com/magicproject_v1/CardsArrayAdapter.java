@@ -60,6 +60,7 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
         ViewHolder view;
         View listItem = convertView;
         if (listItem == null) {
+            System.out.println("ALLO");
             view = new ViewHolder();
             listItem = LayoutInflater.from(mContext).inflate(R.layout.list_cards, parent, false);
 
@@ -73,6 +74,7 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
             view = (ViewHolder) convertView.getTag();
         }
 
+        System.out.println("BOAS");
         Card card = cards.get(position);
         int quantity = quantities.get(card.getName());
 

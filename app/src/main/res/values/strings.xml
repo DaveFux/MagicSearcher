@@ -26,4 +26,5 @@
     <string name="addToCollection">Add to collection</string>
     <string name="inputHint">Number of cards to add to collection</string>
     <string name="manaCostOption">Enable card mana cost field</string>
+    <string name="appTitle">Magic Project</string>
 </resources>
