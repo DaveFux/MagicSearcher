@@ -57,14 +57,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     protected NavigationView mNavigationView;
     protected CoordinatorLayout mCoordinatorLayout;
 
-    protected ListView.OnItemClickListener seeCard = (parent, view, position, id) -> {
-        Intent intent = new Intent(CollectionActivity.this, CardViewActivity.class);
-        Bundle b = new Bundle();
-        b.putString("image", cardListArray.get(position).getImage());
-        intent.putExtras(b);
-        startActivity(intent);
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,12 +139,20 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     }
                     return true;
                 });
+
+                mCardListView.setOnItemClickListener((parent, view, position, id) -> {
+                    Intent intent = new Intent(CollectionActivity.this, CardViewActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("image", cardListArray.get(position).getImage());
+                    intent.putExtras(b);
+                    startActivity(intent);
+                });
+
                 bundle = getIntent().getExtras();
                 String collectionName = bundle.getString("collectionName");
                 setTitle(collectionName != null ? collectionName : "All cards");
                 new LoadCardsFromCollections().execute();
 
-                mCardListView.setOnItemClickListener(seeCard);
                 registerForContextMenu(mCardListView);
             }
         }
