@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.howToUse:
                             startActivity(new Intent(MainActivity.this, HowToUseActivity.class));
+                            break;
                     }
                     return true;
                 });
