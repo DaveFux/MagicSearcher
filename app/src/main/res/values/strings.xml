@@ -30,7 +30,7 @@
         \n\t\t\t -tem search pelo nome da defesa das cartas:
         \n\t\t\t\t tgh:"Mana cost da carta";\n
         \n</string>
-    <string name="AboutAutores">Desenvolvida por: \n\tBruno Ferreira - 150118025 \n\tDavid Silva - 160118000 \n\tPaulo Pimenta - 160118000</string>
+    <string name="AboutAutores">Desenvolvida por: \n\tBruno Ferreira - 150118025 \n\tDavid Silva - 160118000 \n\tPaulo Pimenta - 160118000 \n\tAndré Alves - 160118008</string>
     <string name="randomCard">Random card</string>
     <string name="edit_message">Enter collection name</string>
     <string name="tags_message">Enter collection tags</string>
