@@ -46,15 +46,8 @@ public class MainActivity extends AppCompatActivity {
     protected AlphaAnimation inAnimation;
     protected AlphaAnimation outAnimation;
     protected FrameLayout progressBarHolder;
-
-    protected ListView.OnItemClickListener seeCollection = (parent, view, position, id) -> {
-        Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
-        Bundle b = new Bundle();
-        b.putString("collectionName", collectionListArray.get(position).getName());
-        b.putInt("collectionId", position + 1);
-        intent.putExtras(b);
-        startActivity(intent);
-    };
+    protected Toolbar mToolbar;
+    protected NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,97 +66,126 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void init() {
-        mContext = this;
-        mDb = new CardDB(mContext);
+        boolean bDataMembersInitialized = initDataMembers();
+        this.setTitle("Collections");
 
-        progressBarHolder = findViewById(R.id.progressBarHolder);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        if (bDataMembersInitialized) {
+            setSupportActionBar(mToolbar);
+            ActionBar actionbar = getSupportActionBar();
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if (preferences.getBoolean("first_run", true)) {
-            new parseInformation().execute();
-        }
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            if (preferences.getBoolean("first_run", true)) {
+                new parseInformation().execute();
+            }
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(
-                menuItem -> {
-                    menuItem.setChecked(true);
-                    mDrawerLayout.closeDrawers();
-                    switch (menuItem.getItemId()) {
-                        case R.id.searchCards:
-                            Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
-                            Bundle b = new Bundle();
-                            b.putBoolean("allCards", true);
-                            intent.putExtras(b);
-                            startActivity(intent);
-                            break;
-                        case R.id.randomCard:
-                            System.out.println("OOF");
-                            Intent randomCardIntent = new Intent(MainActivity.this, CardViewActivity.class);
-                            Bundle randomCardBundle = new Bundle();
-                            Card c = mDb.retrieveCard();
-                            randomCardBundle.putString("image", c.getImage());
-                            randomCardIntent.putExtras(randomCardBundle);
-                            startActivity(randomCardIntent);
-                            break;
-                        case R.id.addCollection:
-                            startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
-                            break;
-                        case R.id.settings:
-                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                            break;
-                        case R.id.aboutUs:
-                            startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                            break;
-                        case R.id.howToUse:
-                            startActivity(new Intent(MainActivity.this, HowToUseActivity.class));
-                            break;
-                    }
-                    return true;
-                });
-
-        Bundle newCollectionBundle = getIntent().getExtras();
-        if (newCollectionBundle != null) {
-            if (newCollectionBundle.getBoolean("add")) {   //add
-                String bName = newCollectionBundle.getString("name");
-                String bTags = newCollectionBundle.getString("tags");
-
-                if (bName != null && bTags != null) {
-                    Collection c = new Collection(bName, bTags);
-                    mDb.addCollection(c);
+            mNavigationView.setCheckedItem(0);
+            mNavigationView.setNavigationItemSelectedListener(menuItem -> {
+                mDrawerLayout.closeDrawers();
+                Bundle bundle = new Bundle();
+                switch (menuItem.getItemId()) {
+                    case R.id.idMenuSearchCards:
+                        Intent searchCardsIntent = new Intent(MainActivity.this, CollectionActivity.class);
+                        bundle.putBoolean("allCards", true);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        searchCardsIntent.putExtras(bundle);
+                        startActivity(searchCardsIntent);
+                        break;
+                    case R.id.idMenuRandomCard:
+                        Card c = mDb.retrieveCard();
+                        Intent randomCardIntent = new Intent(MainActivity.this, CardViewActivity.class);
+                        bundle.putString("image", c.getImage());
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        randomCardIntent.putExtras(bundle);
+                        startActivity(randomCardIntent);
+                        break;
+                    case R.id.idMenuAddCollection:
+                        startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
+                        break;
+                    case R.id.idMenuSettings:
+                        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        settingsIntent.putExtras(bundle);
+                        startActivity(settingsIntent);
+                        break;
+                    case R.id.idMenuAboutUs:
+                        Intent aboutUsIntent = new Intent(MainActivity.this, AboutUsActivity.class);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        aboutUsIntent.putExtras(bundle);
+                        startActivity(aboutUsIntent);
+                        break;
+                    case R.id.idMenuHowToUse:
+                        Intent howToUseIntent = new Intent(MainActivity.this, HowToUseActivity.class);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        howToUseIntent.putExtras(bundle);
+                        startActivity(howToUseIntent);
+                        break;
                 }
-            } else {
-                int bCollectionId = newCollectionBundle.getInt("collectionId");
-                String bName = newCollectionBundle.getString("name");
-                String bTags = newCollectionBundle.getString("tags");
+                return true;
+            });
 
-                if (bName != null && bTags != null) {
-                    mDb.editCollection(bCollectionId, bName, bTags);
+            collectionListView.setOnItemClickListener((parent, view, position, id) -> {
+                Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
+                Bundle b = new Bundle();
+                b.putString("collectionName", collectionListArray.get(position).getName());
+                b.putInt("collectionId", position + 1);
+                intent.putExtras(b);
+                startActivity(intent);
+            });
+
+            Bundle newCollectionBundle = getIntent().getExtras();
+            if (newCollectionBundle != null) {
+                if (newCollectionBundle.getBoolean("add")) {   //add
+                    String bName = newCollectionBundle.getString("name");
+                    String bTags = newCollectionBundle.getString("tags");
+
+                    if (bName != null && bTags != null) {
+                        Collection c = new Collection(bName, bTags);
+                        mDb.addCollection(c);
+                    }
+                } else {
+                    int bCollectionId = newCollectionBundle.getInt("collectionId");
+                    String bName = newCollectionBundle.getString("name");
+                    String bTags = newCollectionBundle.getString("tags");
+
+                    if (bName != null && bTags != null) {
+                        mDb.editCollection(bCollectionId, bName, bTags);
+                    }
                 }
             }
 
+            collectionListArray.addAll(mDb.retrieveAllCollections());
+            allCollections.addAll(collectionListArray);
+            collectionListView.setAdapter(itemsAdapter);
+            registerForContextMenu(collectionListView);
         }
+    }
 
-        collectionListArray.addAll(mDb.retrieveAllCollections());
-        allCollections.addAll(collectionListArray);
-        collectionListView = findViewById(R.id.collectionList);
+    private boolean initDataMembers() {
+        mContext = this;
+        mDb = new CardDB(mContext);
+        progressBarHolder = findViewById(R.id.idProgressBarHolder);
+        mDrawerLayout = findViewById(R.id.idDrawerLayout);
+        mToolbar = findViewById(R.id.idToolbar);
+        collectionListView = findViewById(R.id.idCollectionList);
+        mNavigationView = findViewById(R.id.idNavigationView);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
-        collectionListView.setAdapter(itemsAdapter);
-        collectionListView.setOnItemClickListener(seeCollection);
-        registerForContextMenu(collectionListView);
+
+        Object[] objects = {mContext, mDb, progressBarHolder, mDrawerLayout,
+                mToolbar, collectionListView, mNavigationView, itemsAdapter};
+
+        for (Object o : objects) {
+            if (o == null) return false;
+        }
+        return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = this.getMenuInflater();
         mi.inflate(R.menu.menu_search, menu);
-        mi.inflate(R.menu.menu_main_activity, menu);
-        MenuItem item = menu.findItem(R.id.cardSearch);
+        MenuItem item = menu.findItem(R.id.idMenuItemCardSearch);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -208,20 +230,6 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.deleteAllCollections:
-                mDb.deleteAllCollections();
-                collectionListArray.clear();
-                itemsAdapter.notifyDataSetChanged();
-                break;
-            case R.id.addCollection:
-                startActivity(new Intent(MainActivity.this, NewCollectionActivity.class));
-                break;
-            case R.id.settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                break;
-            case R.id.aboutUs:
-                startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -236,12 +244,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
-            case R.id.deleteCollection:
+            case R.id.idContextItemDeleteCollection:
                 collectionListArray.remove(info.position);
                 itemsAdapter.notifyDataSetChanged();
                 Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.editCollection:
+            case R.id.idContextItemEditCollection:
                 Intent intent = new Intent(MainActivity.this, NewCollectionActivity.class);
                 Bundle b = new Bundle();
                 b.putInt("collectionId", info.position + 1);
@@ -262,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPreExecute();
             inAnimation = new AlphaAnimation(0f, 1f);
             inAnimation.setDuration(200);
-            progressBarHolder = findViewById(R.id.progressBarHolder);
+            progressBarHolder = findViewById(R.id.idProgressBarHolder);
             progressBarHolder.setAnimation(inAnimation);
             progressBarHolder.setVisibility(View.VISIBLE);
         }

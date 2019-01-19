@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/editCollection"
-        android:title="@string/editCollection"/>
+        android:id="@+id/idContextItemEditCollection"
+        android:title="@string/strEditCollection"/>
 
     <item
-        android:id="@+id/deleteCollection"
-        android:title="@string/deleteCollection"/>
+        android:id="@+id/idContextItemDeleteCollection"
+        android:title="@string/strDeleteCollection"/>
+
+    <item
+        android:id="@+id/idContextItemDeleteAllCollection"
+        android:title="@string/strDeleteAllCollections"/>
 </menu>

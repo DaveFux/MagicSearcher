@@ -1,12 +1,11 @@
 <resources>
     <string name="app_name">MagicProject</string>
-    <string name="addCollection">New collection</string>
+    <string name="strAddCollection">New collection</string>
     <string name="addText">New collection</string>
     <string name="helpText">Help</string>
     <string name="hint">Enter Card Name</string>
-    <string name="searchCards">Search cards</string>
-    <string name="collections">Collections</string>
-    <string name="aboutUs">About us</string>
+    <string name="strSearchCards">Search cards</string>
+    <string name="strAboutUs">About us</string>
     <string name="menuTitle">Search Card</string>
     <string name="AboutMainText">Esta app for criado no ambito da disciplina de Desenvolvimento de Dispositivos Móveis.
         \nO objetivo desta app é fornecer uma plataforma fácil para guardar e aceder a informação sobre o jogo de cartas Magic The Gathering</string>
@@ -31,21 +30,22 @@
         \n\t\t\t\t tgh:"Mana cost da carta";\n
         \n</string>
     <string name="AboutAutores">Desenvolvida por: \n\tBruno Ferreira - 150118025 \n\tDavid Silva - 160118000 \n\tPaulo Pimenta - 160118000 \n\tAndré Alves - 160118008</string>
-    <string name="randomCard">Random card</string>
+    <string name="strRandomCard">Random card</string>
     <string name="edit_message">Enter collection name</string>
     <string name="tags_message">Enter collection tags</string>
     <string name="button_create">Create</string>
     <string name="button_edit">Edit</string>
-    <string name="deleteAllCollections">Delete all collections</string>
-    <string name="updateAllCollections">Update all collections</string>
-    <string name="deleteFromCollection">Delete from collection</string>
-    <string name="editCollection">Edit collection</string>
-    <string name="deleteCollection">Delete collection</string>
+    <string name="strDeleteOneFromCollection">Delete 1 from collection</string>
+    <string name="strDeleteAllFromCollection">Delete all from collection</string>
+    <string name="strEditCollection">Edit collection</string>
+    <string name="strDeleteCollection">Delete collection</string>
+    <string name="strDeleteAllCollections">Delete all collections</string>
     <string name="thumbnailsOption">Enable card thumbnails</string>
-    <string name="settings">Settings</string>
-    <string name="addToCollection">Add to collection</string>
+    <string name="strSettings">Settings</string>
+    <string name="strAddToCollection">Add to collection</string>
     <string name="inputHint">Number of cards to add to collection</string>
     <string name="manaCostOption">Enable card mana cost field</string>
     <string name="appTitle">Magic Project</string>
-    <string name="howToUse">How to use</string>
+    <string name="strHowToUse">How to use</string>
+    <string name="strCollections">Collections</string>
 </resources>

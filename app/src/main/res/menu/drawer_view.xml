@@ -1,48 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <group
-        android:id="@+id/groupTop"
+        android:id="@+id/idMenuGroupTop"
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/searchCards"
+            android:id="@+id/idMenuCollections"
             android:icon="@drawable/ic_dehaze_black"
-            android:title="@string/searchCards" />
+            android:title="@string/strCollections" />
+
         <item
-            android:id="@+id/addCollection"
+            android:id="@+id/idMenuSearchCards"
+            android:icon="@drawable/ic_dehaze_black"
+            android:title="@string/strSearchCards" />
+        <item
+            android:id="@+id/idMenuAddCollection"
             android:icon="@drawable/ic_add_black"
-            android:title="@string/addCollection" />
+            android:title="@string/strAddCollection" />
 
     </group>
 
     <group
-        android:id="@+id/groupMiddle"
+        android:id="@+id/idMenuGroupMiddle"
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/randomCard"
+            android:id="@+id/idMenuRandomCard"
             android:icon="@drawable/ic_shuffle_black"
-            android:title="@string/randomCard" />
+            android:title="@string/strRandomCard" />
 
     </group>
 
     <group
-        android:id="@+id/groupBottom"
+        android:id="@+id/idMenuGroupBottom"
         android:checkableBehavior="single">
 
         <item
-            android:id="@+id/settings"
+            android:id="@+id/idMenuSettings"
             android:icon="@drawable/ic_settings_black"
-            android:title="@string/settings" />
+            android:title="@string/strSettings" />
 
         <item
-            android:id="@+id/aboutUs"
+            android:id="@+id/idMenuAboutUs"
             android:icon="@drawable/ic_view_headline_black"
-            android:title="@string/aboutUs" />
+            android:title="@string/strAboutUs" />
 
         <item
-            android:id="@+id/howToUse"
+            android:id="@+id/idMenuHowToUse"
             android:icon="@drawable/ic_view_headline_black"
-            android:title="@string/howToUse" />
+            android:title="@string/strHowToUse" />
     </group>
 </menu>

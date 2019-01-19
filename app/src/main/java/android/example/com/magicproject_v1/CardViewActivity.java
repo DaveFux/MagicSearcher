@@ -22,17 +22,30 @@ public class CardViewActivity extends AppCompatActivity {
     }
 
     protected void init(){
-        mContext = this;
-        mImageView = findViewById(R.id.imageView);
+        boolean bDataMembersInitialized = initDataMembers();
 
-        Bundle b = getIntent().getExtras();
-        if(b != null){
-            String imageToLoad = b.getString("image");
-            try {
-                mImageView.setImageBitmap(new ImageLoader().execute(imageToLoad).get());
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+        if (bDataMembersInitialized) {
+            Bundle b = getIntent().getExtras();
+            if (b != null) {
+                String imageToLoad = b.getString("image");
+                try {
+                    mImageView.setImageBitmap(new ImageLoader().execute(imageToLoad).get());
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
+    }
+
+    public boolean initDataMembers() {
+        mContext = this;
+        mImageView = findViewById(R.id.idImageView);
+
+        Object[] objects = {mContext, mImageView};
+
+        for (Object o : objects) {
+            if (o == null) return false;
+        }
+        return true;
     }
 }

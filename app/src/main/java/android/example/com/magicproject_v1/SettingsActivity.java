@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -22,7 +21,8 @@ public class SettingsActivity extends AppCompatActivity {
     protected DrawerLayout mDrawerLayout;
     protected CardDB mDb;
     protected Context mContext;
-    private CardDB cardDB;
+    protected Toolbar mToolbar;
+    protected NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,74 +33,100 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mContext = this;
-        setTitle("Options");
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        Switch thumbnailSwitch = findViewById(R.id.switchThumbnail);
-        thumbnailSwitch.setChecked(preferences.getBoolean("thumbnails", true));
-        thumbnailSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("thumbnails", isChecked);
-            editor.apply();
-        });
+        boolean bDataMembersInitialized = initDataMembers();
 
-        Switch manaCostSwitch = findViewById(R.id.switchManaCost);
-        manaCostSwitch.setChecked(preferences.getBoolean("manaCost", true));
-        manaCostSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("manaCost", isChecked);
-            editor.apply();
-        });
+        if (bDataMembersInitialized) {
 
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            Switch thumbnailSwitch = findViewById(R.id.idSwitchThumbnails);
+            thumbnailSwitch.setChecked(preferences.getBoolean("thumbnails", true));
+            thumbnailSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("thumbnails", isChecked);
+                editor.apply();
+            });
+
+            Switch manaCostSwitch = findViewById(R.id.idSwitchManaCost);
+            manaCostSwitch.setChecked(preferences.getBoolean("manaCost", true));
+            manaCostSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("manaCost", isChecked);
+                editor.apply();
+            });
+
+
+            setSupportActionBar(mToolbar);
+            ActionBar actionbar = getSupportActionBar();
+            if(actionbar != null) {
+                actionbar.setDisplayHomeAsUpEnabled(true);
+                actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+            }
+
+            Bundle receivedBundle = getIntent().getExtras();
+            if(receivedBundle != null) {
+                mNavigationView.setCheckedItem(receivedBundle.getInt("menuItemSelected"));
+            }
+            mNavigationView.setNavigationItemSelectedListener(menuItem -> {
+                mDrawerLayout.closeDrawers();
+                Bundle bundle = new Bundle();
+                switch (menuItem.getItemId()) {
+                    case R.id.idMenuCollections:
+                        Intent collectionsIntent = new Intent(SettingsActivity.this, MainActivity.class);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        collectionsIntent.putExtras(bundle);
+                        startActivity(collectionsIntent);
+                        break;
+                    case R.id.idMenuSearchCards:
+                        Intent searchCardsIntent = new Intent(SettingsActivity.this, CollectionActivity.class);
+                        bundle.putBoolean("allCards", true);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        searchCardsIntent.putExtras(bundle);
+                        startActivity(searchCardsIntent);
+                        break;
+                    case R.id.idMenuRandomCard:
+                        Card c = mDb.retrieveCard();
+                        Intent randomCardIntent = new Intent(SettingsActivity.this, CardViewActivity.class);
+                        bundle.putString("image", c.getImage());
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        randomCardIntent.putExtras(bundle);
+                        startActivity(randomCardIntent);
+                        break;
+                    case R.id.idMenuAddCollection:
+                        startActivity(new Intent(SettingsActivity.this, NewCollectionActivity.class));
+                        break;
+                    case R.id.idMenuAboutUs:
+                        Intent aboutUsIntent = new Intent(SettingsActivity.this, AboutUsActivity.class);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        aboutUsIntent.putExtras(bundle);
+                        startActivity(aboutUsIntent);
+                        break;
+                    case R.id.idMenuHowToUse:
+                        Intent howToUseIntent = new Intent(SettingsActivity.this, HowToUseActivity.class);
+                        bundle.putInt("menuItemSelected", menuItem.getItemId());
+                        howToUseIntent.putExtras(bundle);
+                        startActivity(howToUseIntent);
+                        break;
+                }
+                return true;
+            });
+        }
+    }
+
+    private boolean initDataMembers() {
         mContext = this;
         mDb = new CardDB(mContext);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        mDrawerLayout = findViewById(R.id.idDrawerLayout);
+        mToolbar = findViewById(R.id.idToolbar);
+        mNavigationView = findViewById(R.id.idNavigationView);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        Object[] objects = {mContext, mDb, mDrawerLayout, mToolbar,  mNavigationView};
 
-        navigationView.setNavigationItemSelectedListener(
-                menuItem -> {
-
-                    menuItem.setChecked(true);
-                    mDrawerLayout.closeDrawers();
-                    switch (menuItem.getItemId()) {
-                        case R.id.searchCards:
-                            Intent intent = new Intent(SettingsActivity.this, CollectionActivity.class);
-                            Bundle b = new Bundle();
-                            b.putBoolean("allCards", true);
-                            intent.putExtras(b);
-                            startActivity(intent);
-                            break;
-                        case R.id.randomCard:
-                            System.out.println("OOF");
-                            Intent randomCardIntent = new Intent(SettingsActivity.this, CardViewActivity.class);
-                            Bundle randomCardBundle = new Bundle();
-                            Card c = mDb.retrieveCard();
-                            randomCardBundle.putString("image", c.getImage());
-                            randomCardIntent.putExtras(randomCardBundle);
-                            startActivity(randomCardIntent);
-                            break;
-                        case R.id.addCollection:
-                            startActivity(new Intent(SettingsActivity.this, NewCollectionActivity.class));
-                            break;
-                        case R.id.settings:
-                            startActivity(new Intent(SettingsActivity.this, SettingsActivity.class));
-                            break;
-                        case R.id.aboutUs:
-                            startActivity(new Intent(SettingsActivity.this, AboutUsActivity.class));
-                            break;
-                        case R.id.howToUse:
-                            startActivity(new Intent(SettingsActivity.this, HowToUseActivity.class));
-                            break;
-                    }
-                    return true;
-                });
+        for (Object o : objects) {
+            if (o == null) return false;
+        }
+        return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

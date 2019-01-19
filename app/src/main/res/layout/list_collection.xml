@@ -6,7 +6,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/collectionName"
+        android:id="@+id/idCollectionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,17 +16,17 @@
         android:textSize="18sp"/>
 
     <TextView
-        android:id="@+id/tags"
+        android:id="@+id/idTags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/collectionName"
+        android:layout_below="@+id/idCollectionName"
         android:layout_marginTop="5dp"
         android:textColor="@android:color/black"
         />
 
     <TextView
-        android:id="@+id/numberOfCards"
+        android:id="@+id/idNumberOfCards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

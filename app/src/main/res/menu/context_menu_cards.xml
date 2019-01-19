@@ -2,10 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/addToCollection"
-        android:title="@string/addToCollection"/>
+        android:id="@+id/idContextItemAddToCollection"
+        android:title="@string/strAddToCollection"/>
 
     <item
-        android:id="@+id/deleteFromCollection"
-        android:title="@string/deleteFromCollection"/>
+        android:id="@+id/idContextItemDeleteOneFromCollection"
+        android:title="@string/strDeleteOneFromCollection"/>
+
+    <item
+        android:id="@+id/idContextItemDeleteAllFromCollection"
+        android:title="@string/strDeleteAllFromCollection"/>
 </menu>

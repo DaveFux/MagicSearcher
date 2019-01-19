@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/idEditTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -18,7 +18,7 @@
         />
 
     <EditText
-        android:id="@+id/editTextTags"
+        android:id="@+id/idEditTextTags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -27,15 +27,15 @@
         android:ems="10"
         android:hint="@string/tags_message"
         android:inputType="textPersonName"
-        android:layout_below="@id/editTextName"
+        android:layout_below="@id/idEditTextName"
         android:descendantFocusability="blocksDescendants"
         />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/idCreateEditButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextTags"
+        android:layout_below="@id/idEditTextTags"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp"

@@ -15,24 +15,25 @@ public class NewCollectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_collection);
+
         init();
     }
 
     protected void init(){
         bundle = getIntent().getExtras();
         if (bundle!=null) {
-            EditText editTextName = findViewById(R.id.editTextName);
+            EditText editTextName = findViewById(R.id.idEditTextName);
             editTextName.setText(bundle.getString("collectionName"));
-            EditText editTextTags = findViewById(R.id.editTextTags);
+            EditText editTextTags = findViewById(R.id.idEditTextTags);
             editTextTags.setText(bundle.getString("collectionTags"));
-            ((Button)findViewById(R.id.button)).setText(R.string.button_edit);
-        } else ((Button)findViewById(R.id.button)).setText(R.string.button_create);
+            ((Button)findViewById(R.id.idCreateEditButton)).setText(R.string.button_edit);
+        } else ((Button)findViewById(R.id.idCreateEditButton)).setText(R.string.button_create);
     }
 
     public void createCollection(View view) {
-        EditText editTextName = findViewById(R.id.editTextName);
+        EditText editTextName = findViewById(R.id.idEditTextName);
         String name = editTextName.getText().toString();
-        EditText editTextTags = findViewById(R.id.editTextTags);
+        EditText editTextTags = findViewById(R.id.idEditTextTags);
         String tags = editTextTags.getText().toString();
 
         Intent intent = new Intent(NewCollectionActivity.this, MainActivity.class);

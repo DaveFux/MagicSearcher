@@ -35,9 +35,9 @@ public class CollectionsArrayAdapter extends ArrayAdapter<Collection> {
             view = new ViewHolder();
             listItem = LayoutInflater.from(mContext).inflate(R.layout.list_collection, parent,false);
 
-            view.collectionNameTextView = listItem.findViewById(R.id.collectionName);
-            view.collectionTagsTextView = listItem.findViewById(R.id.tags);
-            view.collectionNumberCardsTextView = listItem.findViewById(R.id.numberOfCards);
+            view.collectionNameTextView = listItem.findViewById(R.id.idCollectionName);
+            view.collectionTagsTextView = listItem.findViewById(R.id.idTags);
+            view.collectionNumberCardsTextView = listItem.findViewById(R.id.idNumberOfCards);
 
             listItem.setTag(view);
         } else {

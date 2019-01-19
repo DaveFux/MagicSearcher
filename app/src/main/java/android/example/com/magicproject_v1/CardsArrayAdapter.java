@@ -63,10 +63,10 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
             view = new ViewHolder();
             listItem = LayoutInflater.from(mContext).inflate(R.layout.list_cards, parent, false);
 
-            view.cardThumbnail = listItem.findViewById(R.id.thumbnail);
-            view.cardNameTextView = listItem.findViewById(R.id.cardName);
-            view.cardDescriptionTextView = listItem.findViewById(R.id.description);
-            view.cardManaCostTextView = listItem.findViewById(R.id.manaCost);
+            view.cardThumbnail = listItem.findViewById(R.id.idThumbnailImageView);
+            view.cardNameTextView = listItem.findViewById(R.id.idCardName);
+            view.cardDescriptionTextView = listItem.findViewById(R.id.idDescription);
+            view.cardManaCostTextView = listItem.findViewById(R.id.idManaCost);
 
             listItem.setTag(view);
         } else {

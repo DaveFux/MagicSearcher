@@ -13,7 +13,7 @@
             android:layout_height="match_parent">
 
             <Spinner
-                android:id="@+id/collectionSpinner"
+                android:id="@+id/idCollectionSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="20dp"
@@ -21,13 +21,14 @@
                 android:layout_centerInParent="true"/>
 
             <RelativeLayout
+                android:id="@+id/idUserInputRL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/collectionSpinner"
+                android:layout_below="@+id/idCollectionSpinner"
                 android:paddingTop="10dp">
 
                 <AutoCompleteTextView
-                    android:id="@+id/input"
+                    android:id="@+id/idUserInput"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -36,15 +37,15 @@
                     android:layout_centerInParent="true"/>
 
                 <TextView
+                    android:id="@+id/idUserInputHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/input"
+                    android:layout_below="@+id/idUserInput"
                     android:gravity="center"
                     android:text="@string/inputHint"
                     android:textSize="12sp" />
+
             </RelativeLayout>
         </RelativeLayout>
-
-
     </android.support.design.widget.TextInputLayout>
 </RelativeLayout>
