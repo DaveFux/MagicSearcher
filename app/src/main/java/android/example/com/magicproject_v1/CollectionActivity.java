@@ -35,6 +35,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import static android.support.design.widget.Snackbar.make;
+
 public class CollectionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     protected Context mContext;
@@ -281,7 +283,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         .simple_spinner_dropdown_item);
                 spinner.setAdapter(spinnerArrayAdapter);
                 builder.setView(viewInflated);
-                //SNACKBAR POR FAZER
+                //TODO SNACKBAR POR FAZER
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -294,8 +296,9 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                             cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
                             itemsAdapter.notifyDataSetChanged();
                         }
-                        Snackbar snackbar = Snackbar.make(mContext, "Added "+mNumberOfCards+" of "+mDb.retrieveCard(cardId).getName()+"  to the "+mDb.retrieveAllCollections().get(collectionID-1).getName(), Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        View activity = LayoutInflater.from(mContext).inflate(R.layout.activity_collection, cardListView, false);
+                        /*Snackbar snackbar = make(activity, "Added "+mNumberOfCards+" of "+mDb.retrieveCard(cardId).getName()+"  to the "+mDb.retrieveAllCollections().get(collectionID-1).getName(), Snackbar.LENGTH_LONG);
+                        snackbar.show();*/
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
