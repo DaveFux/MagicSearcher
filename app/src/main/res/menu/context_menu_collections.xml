@@ -11,4 +11,8 @@
     <item
         android:id="@+id/idContextItemDeleteAllCollection"
         android:title="@string/strDeleteAllCollections"/>
+
+    <item
+        android:id="@+id/idContextItemClearCollection"
+        android:title="@string/strClearCollections"/>
 </menu>

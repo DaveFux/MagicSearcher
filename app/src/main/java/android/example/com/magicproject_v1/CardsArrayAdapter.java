@@ -3,6 +3,7 @@ package android.example.com.magicproject_v1;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.utils.DuplicatesList;
 import android.example.com.magicproject_v1.utils.ImageLoader;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
@@ -29,30 +30,15 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
 
     private SharedPreferences preferences;
     private Context mContext;
-    private List<Card> cards;
-    private HashMap<String, Integer> quantities;
+    private DuplicatesList objects;
+    private boolean allowDuplicates;
 
-    public CardsArrayAdapter(Context context, List<Card> objects) {
-        super(context, 0, objects);
+    public CardsArrayAdapter(Context context, DuplicatesList objects, boolean allowDuplicates) {
+        super(context, 0, objects.getList());
+        this.allowDuplicates = allowDuplicates;
         this.mContext = context;
-        this.cards = objects;
-        quantities = new HashMap<>();
-        this.quantities = filterDuplicates(objects);
+        this.objects = objects;
         this.preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-    }
-
-    private HashMap<String, Integer> filterDuplicates(List<Card> cards){
-        List<Card> cardsToRemove = new ArrayList<>();
-        for (Card card : cards) {
-            if(quantities.containsKey(card.getName())){
-                quantities.replace(card.getName(), quantities.get(card.getName()) + 1);
-                cardsToRemove.add(card);
-            }else{
-                quantities.put(card.getName(), 1);
-            }
-        }
-        this.cards.removeAll(cardsToRemove);
-        return quantities;
     }
 
     @Override
@@ -73,9 +59,11 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
             view = (ViewHolder) convertView.getTag();
         }
 
-        Card card = cards.get(position);
-        int quantity = quantities.get(card.getName());
-
+        Card card = objects.getList().get(position);
+        int quantity = 0;
+        if (allowDuplicates){
+             quantity = objects.getDuplicates().get(position);
+        }
 
         if(preferences.getBoolean("thumbnails", true)) {
             try {
@@ -93,7 +81,11 @@ public class CardsArrayAdapter extends ArrayAdapter<Card> {
             }
         }
 
-        view.cardNameTextView.setText(quantity + " x " + card.getName());
+        String cardName = card.getName();
+        if(allowDuplicates){
+            cardName = quantity + " x " + card.getName();
+        }
+        view.cardNameTextView.setText(cardName);
 
         String strDescription = card.getType();
         if(card.getType().contains("Creature")){

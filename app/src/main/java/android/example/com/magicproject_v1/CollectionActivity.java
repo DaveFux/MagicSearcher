@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.example.com.magicproject_v1.classes.Card;
 import android.example.com.magicproject_v1.classes.Collection;
 import android.example.com.magicproject_v1.utils.CardDB;
+import android.example.com.magicproject_v1.utils.DuplicatesList;
 import android.os.AsyncTask;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -57,6 +58,14 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     protected NavigationView mNavigationView;
     protected CoordinatorLayout mCoordinatorLayout;
 
+    private boolean mAllowDuplicates = true;
+    private boolean mSortByName = false;
+    private boolean mSortByType = false;
+    private boolean mSortByPower = false;
+    private boolean mSortByToughness = false;
+    private boolean mSortByManaCost = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +96,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
 
             Bundle receivedBundle = getIntent().getExtras();
             if (receivedBundle != null) {
+                mAllowDuplicates = !receivedBundle.getBoolean("allCards");
                 mNavigationView.setCheckedItem(receivedBundle.getInt("menuItemSelected"));
                 mNavigationView.setNavigationItemSelectedListener(menuItem -> {
                     mDrawerLayout.closeDrawers();
@@ -99,7 +109,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                             startActivity(collectionsIntent);
                             break;
                         case R.id.idMenuSearchCards:
-                            if (receivedBundle.getBoolean("allCards", false)) {
+                            if (!receivedBundle.getBoolean("allCards", false)) {
                                 Intent searchCardsIntent = new Intent(CollectionActivity.this, CollectionActivity.class);
                                 bundle.putBoolean("allCards", true);
                                 bundle.putInt("menuItemSelected", menuItem.getItemId());
@@ -181,6 +191,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = this.getMenuInflater();
         mi.inflate(R.menu.menu_search, menu);
+        mi.inflate(R.menu.menu_cards, menu);
         MenuItem item = menu.findItem(R.id.idMenuItemCardSearch);
         SearchView searchView = (SearchView) item.getActionView();
 
@@ -191,8 +202,8 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                String str = newText.toLowerCase();
+            public boolean onQueryTextChange(String query) {
+                String str = query.toLowerCase();
                 cardListArray.clear();
                 if (str.contains(":")) {
                     String[] strAfterSplit = str.split(":");
@@ -290,7 +301,8 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         }
                     }
                 }
-                itemsAdapter.notifyDataSetChanged();
+                itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
+                mCardListView.setAdapter(itemsAdapter);
                 return false;
             }
         });
@@ -304,6 +316,62 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.idMenuSortName:
+                cardListArray.sort((o1, o2) -> {
+                    if(mSortByName){
+                        return o2.getName().compareTo(o1.getName());
+                    } else {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                mSortByName = !mSortByName;
+                itemsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.idMenuSortType:
+                cardListArray.sort((o1, o2) -> {
+                    if(mSortByType){
+                        return o2.getType().compareTo(o1.getType());
+                    } else {
+                        return o1.getType().compareTo(o2.getType());
+                    }
+                });
+                mSortByType = !mSortByType;
+                itemsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.idMenuSortManaCost:
+                cardListArray.sort((o1, o2) -> {
+                    if(mSortByManaCost){
+                        return Integer.compare(o1.getManaCost().convertedManaCost(), o2.getManaCost().convertedManaCost());
+                    } else {
+                        return Integer.compare(o2.getManaCost().convertedManaCost(), o1.getManaCost().convertedManaCost());
+                    }
+                });
+                mSortByManaCost = !mSortByManaCost;
+                itemsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.idMenuSortPower:
+                cardListArray.sort((o1, o2) -> {
+                    if(mSortByPower){
+                        return Integer.compare(o1.getPower(), o2.getPower());
+                    } else {
+                        return Integer.compare(o2.getPower(), o1.getPower());
+                    }
+                });
+                mSortByPower = !mSortByPower;
+                itemsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.idMenuSortToughness:
+                cardListArray.sort((o1, o2) -> {
+                    if(mSortByToughness){
+                        return Integer.compare(o1.getToughness(), o2.getToughness());
+                    } else {
+                        return Integer.compare(o2.getToughness(), o1.getToughness());
+                    }
+                });
+                mSortByToughness = !mSortByToughness;
+                itemsAdapter.notifyDataSetChanged();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -318,10 +386,11 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         String cardName = cardListArray.get(info.position).getName();
+        String cardId = cardListArray.get(info.position).getId();
+        int realCollectionID = bundle.getInt("collectionID");
         switch (item.getItemId()) {
             case R.id.idContextItemAddToCollection:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                String cardId = cardListArray.get(info.position).getId();
                 builder.setTitle(cardName);
                 View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.input_dialog, mCardListView, false);
                 final EditText input = viewInflated.findViewById(R.id.idUserInput);
@@ -338,16 +407,19 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         int mNumberOfCards = Integer.parseInt(input.getText().toString());
-                        int collectionID = mSpinner.getSelectedItemPosition() + 1;
-                        mDb.addCardInCollection(cardId, collectionID, mNumberOfCards);
+                        int collectionIDInSpinner = collections.get(mSpinner.getSelectedItemPosition()).getId();
+                        mDb.addCardInCollection(cardId, collectionIDInSpinner, mNumberOfCards);
                         if (bundle.getString("collectionName") != null) {
                             cardListArray.clear();
-                            cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
-                            itemsAdapter.notifyDataSetChanged();
+                            cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionIDInSpinner));
+                            System.out.println(cardListArray.size());
+                            itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
+                            System.out.println(cardListArray.size());
+                            mCardListView.setAdapter(itemsAdapter);
                         }
                         Snackbar addCardsSnackbar = make(mCoordinatorLayout,
-                                "Added " + mNumberOfCards + " of " + cardName + "  to the "
-                                        + mDb.retrieveAllCollections().get(collectionID - 1).getName(),
+                                "Added " + mNumberOfCards + " " + cardName + " to the collection "
+                                        + mDb.retrieveAllCollections().get(realCollectionID).getName(),
                                 Snackbar.LENGTH_LONG);
                         addCardsSnackbar.show();
                     }
@@ -361,20 +433,23 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 builder.show();
                 return true;
             case R.id.idContextItemDeleteOneFromCollection:
-                cardListArray.remove(info.position);
-                itemsAdapter.notifyDataSetChanged();
+                /*ArrayList<Card> cardsUpdated = mDb.retrieveAllCardsInCollection(cardId, collectionID);
+                mDb.deleteOneCardFromCollection(cardId, collectionID, cardsUpdated.size() - 1);
+                cardListArray.clear();
+                cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
+                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray, mAllowDuplicates);
+                mCardListView.setAdapter(itemsAdapter);
                 Snackbar deletedOneSnackbar = make(mCoordinatorLayout,
                         "Deleted 1 " + cardName + " from this collection",
                         Snackbar.LENGTH_LONG);
-                deletedOneSnackbar.show();
+                deletedOneSnackbar.show();*/
                 return true;
             case R.id.idContextItemDeleteAllFromCollection:
-                for (Card card : allCards) {
-                    if(card.getName().equals(cardName)){
-                        cardListArray.remove(card);
-                    }
-                }
-                itemsAdapter.notifyDataSetChanged();
+                mDb.deleteAllCardsFromCollection(cardId, realCollectionID);
+                cardListArray.clear();
+                cardListArray.addAll(mDb.retrieveAllCardsInCollection(realCollectionID));
+                itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
+                mCardListView.setAdapter(itemsAdapter);
                 Snackbar deletedAllSnackbar = make(mCoordinatorLayout,
                         "Deleted all " + cardName + " from this collection",
                         Snackbar.LENGTH_LONG);
@@ -428,9 +503,29 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
                 }
                 allCards.addAll(cardListArray);
-                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray);
+                itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
             }
             return null;
         }
+    }
+
+    private DuplicatesList filterResults(){
+        DuplicatesList retorno = new DuplicatesList();
+        for (Card card : cardListArray) {
+            boolean contains = false;
+            for (int i=0; i < retorno.getList().size(); i++){
+                contains = retorno.getList().get(i).getName().contains(card.getName());
+                if (contains) {
+                    retorno.getDuplicates().set(i, retorno.getDuplicates().get(i) + 1);
+                    break;
+                }
+            }
+            if (!contains) {
+                retorno.getList().add(card);
+                retorno.getDuplicates().add(1);
+            }
+        }
+        System.out.println(retorno.getList().size());
+        return retorno;
     }
 }

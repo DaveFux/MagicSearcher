@@ -6,16 +6,27 @@ import java.util.List;
 
 public class Collection {
 
+    private int id;
     private String name;
     private List<String> tags;
     private List<Card> cards;
     private int numberOfCards;
 
-    public Collection(String name, List<String> tags, List<Card> cards) {
+    public Collection(int id, String name, List<String> tags, List<Card> cards) {
+        this.id = id;
         this.name = name;
         this.tags = tags;
         this.cards = cards;
         this.numberOfCards = cards.size();
+    }
+
+    public Collection(int id, String name, String tags) {
+        this.id = id;
+        this.name = name;
+        this.tags = Arrays.asList(tags.replaceAll("\\[", "")
+                .replaceAll("]", "").split(","));
+        this.cards = new ArrayList<>();
+        this.numberOfCards = 0;
     }
 
     public Collection(String name, String tags) {
@@ -62,5 +73,13 @@ public class Collection {
 
     public void setCards(List<Card> cards) {
         this.cards = cards;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

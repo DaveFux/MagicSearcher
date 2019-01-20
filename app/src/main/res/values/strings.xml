@@ -48,4 +48,11 @@
     <string name="appTitle">Magic Project</string>
     <string name="strHowToUse">How to use</string>
     <string name="strCollections">Collections</string>
+    <string name="strSortName">Sort by name</string>
+    <string name="strSortType">Sort by type</string>
+    <string name="strSortManaCost">Sort by mana cost</string>
+    <string name="strSortPower">Sort by power</string>
+    <string name="strSortToughness">Sort by toughness</string>
+    <string name="strMenuSortNumberOfCards">Sort by number of cards</string>
+    <string name="strClearCollections">Clear collection</string>
 </resources>

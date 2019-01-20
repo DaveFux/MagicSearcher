@@ -37,7 +37,7 @@ public class CardDB extends SQLiteOpenHelper {
     private static final String COL_QUANTITY = "col_quantity";
     private static final String TAG = "@CardDB";
 
-    public CardDB(Context context){
+    public CardDB(Context context) {
         this(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -53,7 +53,7 @@ public class CardDB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         boolean bThereIsDatabaseUpgrade = newVersion > oldVersion;
-        if(bThereIsDatabaseUpgrade){
+        if (bThereIsDatabaseUpgrade) {
             uninstallDB(db);
             installDB(db);
         }
@@ -69,7 +69,7 @@ public class CardDB extends SQLiteOpenHelper {
             db.execSQL(strSQLTableCardsDestruction);
             db.execSQL(strSQLTableCollectionsDestruction);
             db.execSQL(strSQLTableCardsInCollectionDestruction);
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
@@ -84,15 +84,15 @@ public class CardDB extends SQLiteOpenHelper {
             db.execSQL(strSQLTableCardsCreation);
             db.execSQL(strSQLTableCollectionsCreation);
             db.execSQL(strSQLTableCardsInCollectionCreation);
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     // COMPLETED
-    public long addCard (Card card){
+    public long addCard(Card card) {
         SQLiteDatabase dbw = this.getWritableDatabase();
-        if (dbw!=null) {
+        if (dbw != null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_ID, card.getId());
             cv.put(COL_NAME, card.getName());
@@ -114,15 +114,16 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    public long addCollection(Collection collection){
+    public long addCollection(Collection collection) {
         SQLiteDatabase dbw = this.getWritableDatabase();
-        if (dbw!=null) {
+        if (dbw != null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_NAME, collection.getName());
             cv.put(COL_TAGS, collection.getTags());
             long id = dbw.insert(TABLE_COLLECTIONS, null, cv);
+            System.out.println(id);
             dbw.close();
-            for(Card c : collection.getCards()){
+            for (Card c : collection.getCards()) {
                 addCardInCollection(c.getId(), (int) id);
             }
             return id;
@@ -131,9 +132,9 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // NOT COMPLETED
-    public long editCollection(int id, String name, String tags){
+    public long editCollection(int id, String name, String tags) {
         SQLiteDatabase dbw = this.getWritableDatabase();
-        if (dbw!=null) {
+        if (dbw != null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_NAME, name);
             cv.put(COL_TAGS, tags);
@@ -147,7 +148,7 @@ public class CardDB extends SQLiteOpenHelper {
     // COMPLETED
     public long addCardInCollection(String c, int collectionID) {
         SQLiteDatabase dbw = this.getWritableDatabase();
-        if (dbw!=null) {
+        if (dbw != null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_ID_COLLECTIONS, collectionID);
             cv.put(COL_ID_CARDS, c);
@@ -162,7 +163,7 @@ public class CardDB extends SQLiteOpenHelper {
     // COMPLETED
     public long addCardInCollection(String c, int collectionID, int quantity) {
         SQLiteDatabase dbw = this.getWritableDatabase();
-        if (dbw!=null) {
+        if (dbw != null) {
             ContentValues cv = new ContentValues();
             cv.put(COL_ID_COLLECTIONS, collectionID);
             cv.put(COL_ID_CARDS, c);
@@ -175,20 +176,20 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    public ArrayList<Collection> retrieveAllCollections(){
+    public ArrayList<Collection> retrieveAllCollections() {
         return retrieveAllCollections("");
     }
 
     // COMPLETED
-    public ArrayList<Collection> retrieveAllCollections(String filter){
+    public ArrayList<Collection> retrieveAllCollections(String filter) {
         ArrayList<Collection> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
-        if (dbr!=null) {
+        if (dbr != null) {
             String query = "select * from " + TABLE_COLLECTIONS + " where " + COL_NAME + " like '%" + filter + "%'";
             Cursor cursor = dbr.rawQuery(query, null);
-            if(cursor.moveToFirst()){
-                while(!cursor.isAfterLast()) {
-                    Collection c = new Collection(cursor.getString(1), cursor.getString(2));
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    Collection c = new Collection(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                     c.setNumberOfCards(countCardsInCollection(cursor.getInt(0)));
                     retorno.add(c);
                     cursor.moveToNext();
@@ -200,12 +201,61 @@ public class CardDB extends SQLiteOpenHelper {
         return retorno;
     }
 
-    // COMPLETED
-    public boolean deleteAllCollections(){
+    public void deleteOneCardFromCollection(String cardID, int collectionID, int quantity) {
         SQLiteDatabase dbw = this.getWritableDatabase();
-        if (dbw!=null) {
-            String query = "delete from " + TABLE_COLLECTIONS;
+        if (dbw != null) {
+            if (quantity > 0) {
+                ContentValues cv = new ContentValues();
+                cv.put(COL_QUANTITY, quantity);
+                int rows = dbw.update(TABLE_CARDS_IN_COLLECTION, cv, COL_ID_COLLECTIONS + " = " + collectionID +
+                        " and " + COL_ID_CARDS + " like '%" + cardID + "%'", null);
+                System.out.println(rows);
+            } else {
+                deleteAllCardsFromCollection(cardID, collectionID);
+            }
+            dbw.close();
+        }
+    }
+
+    public void deleteAllCardsFromCollection(String cardID, int collectionID) {
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw != null) {
+            String query = "delete from " + TABLE_CARDS_IN_COLLECTION + " where "
+                    + COL_ID_COLLECTIONS + " = " + collectionID + " and " + COL_ID_CARDS + " like '%" + cardID + "%'";
+            System.out.println(query);
             dbw.execSQL(query);
+            dbw.close();
+        }
+    }
+
+    public void deleteAllCardsFromCollection(int collectionID) {
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw != null) {
+            String query = "delete from " + TABLE_CARDS_IN_COLLECTION + " where "
+                    + COL_ID_COLLECTIONS + " = " + collectionID;
+            dbw.execSQL(query);
+            dbw.close();
+        }
+    }
+
+    public void deleteCollection(int collectionID) {
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw != null) {
+            String query = "delete from " + TABLE_COLLECTIONS + " where "
+                    + COL_ID + " = " + collectionID;
+            dbw.execSQL(query);
+            dbw.close();
+        }
+    }
+
+    // COMPLETED
+    public boolean deleteAllCollections() {
+        SQLiteDatabase dbw = this.getWritableDatabase();
+        if (dbw != null) {
+            String query = "delete from " + TABLE_COLLECTIONS;
+            String queryCards = "delete from " + TABLE_CARDS_IN_COLLECTION;
+            dbw.execSQL(query);
+            dbw.execSQL(queryCards);
             dbw.close();
             return true;
         }
@@ -213,15 +263,15 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    private int countCardsInCollection(int collectionId){
+    private int countCardsInCollection(int collectionId) {
         int count = 0;
         SQLiteDatabase dbr = this.getReadableDatabase();
-        if (dbr!=null) {
-            String query = "select "+COL_QUANTITY+" from " + TABLE_CARDS_IN_COLLECTION
+        if (dbr != null) {
+            String query = "select " + COL_QUANTITY + " from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
-            if(cursor.moveToFirst()){
-                while(!cursor.isAfterLast()) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
                     count += cursor.getInt(0);
                     cursor.moveToNext();
                 }
@@ -233,20 +283,44 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    public ArrayList<Card> retrieveAllCardsInCollection(int collectionId){
+    public ArrayList<Card> retrieveAllCardsInCollection(int collectionId) {
         ArrayList<Card> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
-        if (dbr!=null) {
-            String query = "select " + COL_ID_CARDS + ","+COL_QUANTITY+" from " + TABLE_CARDS_IN_COLLECTION
+        if (dbr != null) {
+            String query = "select " + COL_ID_CARDS + "," + COL_QUANTITY + " from " + TABLE_CARDS_IN_COLLECTION
                     + " where " + COL_ID_COLLECTIONS + " = " + collectionId;
             Cursor cursor = dbr.rawQuery(query, null);
-            if(cursor.moveToFirst()){
-                while(!cursor.isAfterLast()) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
                     String cardId = cursor.getString(0);
                     int cardQuant = cursor.getInt(1);
                     Card c = retrieveCard(cardId);
-                    for(int i=0;i<cardQuant;i++){
-                        retorno.add(retrieveCard(cardId));
+                    for (int i = 0; i < cardQuant; i++) {
+                        retorno.add(c);
+                    }
+                    cursor.moveToNext();
+                }
+            }
+            dbr.close();
+            cursor.close();
+        }
+        return retorno;
+    }
+
+    public ArrayList<Card> retrieveAllCardsInCollection(String cardID, int collectionId) {
+        ArrayList<Card> retorno = new ArrayList<>();
+        SQLiteDatabase dbr = this.getReadableDatabase();
+        if (dbr != null) {
+            String query = "select " + COL_ID_CARDS + "," + COL_QUANTITY + " from " + TABLE_CARDS_IN_COLLECTION
+                    + " where " + COL_ID_COLLECTIONS + " = " + collectionId + " and " + COL_ID_CARDS + " like '%" + cardID + "%'";
+            Cursor cursor = dbr.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String cardId = cursor.getString(0);
+                    int cardQuant = cursor.getInt(1);
+                    Card c = retrieveCard(cardId);
+                    for (int i = 0; i < cardQuant; i++) {
+                        retorno.add(c);
                     }
                     cursor.moveToNext();
                 }
@@ -258,14 +332,14 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    public Card retrieveCard(){
+    public Card retrieveCard() {
         Card retorno = null;
         SQLiteDatabase dbr = this.getReadableDatabase();
-        if (dbr!=null) {
+        if (dbr != null) {
             String query = "select * from " + TABLE_CARDS + " order by random() limit 1";
             Cursor cursor = dbr.rawQuery(query, null);
-            if(cursor.moveToFirst()){
-                while(!cursor.isAfterLast()) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
                     retorno = new Card(cursor.getString(0), cursor.getString(1),
                             cursor.getString(2), cursor.getString(3), cursor.getString(4),
                             cursor.getString(5), cursor.getString(6), cursor.getString(7),
@@ -281,15 +355,15 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    public Card retrieveCard(String cardID){
+    public Card retrieveCard(String cardID) {
         Card retorno = null;
         SQLiteDatabase dbr = this.getReadableDatabase();
-        if (dbr!=null) {
+        if (dbr != null) {
             String query = "select * from " + TABLE_CARDS + " where " +
                     COL_ID + " like '%" + cardID + "%'";
             Cursor cursor = dbr.rawQuery(query, null);
-            if(cursor.moveToFirst()){
-                while(!cursor.isAfterLast()) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
                     retorno = new Card(cursor.getString(0), cursor.getString(1),
                             cursor.getString(2), cursor.getString(3), cursor.getString(4),
                             cursor.getString(5), cursor.getString(6), cursor.getString(7),
@@ -305,27 +379,27 @@ public class CardDB extends SQLiteOpenHelper {
     }
 
     // COMPLETED
-    public ArrayList<Card> retrieveCards(){
+    public ArrayList<Card> retrieveCards() {
         return retrieveCards("", "");
     }
 
     // COMPLETED
-    public ArrayList<Card> retrieveCards(String filter){
+    public ArrayList<Card> retrieveCards(String filter) {
         return retrieveCards(COL_NAME, filter);
     }
 
     // COMPLETED
-    private ArrayList<Card> retrieveCards(String columnName, String filter){
+    private ArrayList<Card> retrieveCards(String columnName, String filter) {
         ArrayList<Card> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
-        if (dbr!=null) {
+        if (dbr != null) {
             String query = "select * from " + TABLE_CARDS;
-            if(columnName.length() > 0) {
+            if (columnName.length() > 0) {
                 query += " where " + columnName + " like '%" + filter + "%'";
             }
             Cursor cursor = dbr.rawQuery(query, null);
-            if(cursor.moveToFirst()){
-                while(!cursor.isAfterLast()) {
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
                     Card c = new Card(cursor.getString(0), cursor.getString(1),
                             cursor.getString(2), cursor.getString(3), cursor.getString(4),
                             cursor.getString(5), cursor.getString(6), cursor.getString(7),
@@ -341,13 +415,13 @@ public class CardDB extends SQLiteOpenHelper {
         return retorno;
     }
 
-    public void clear(){
+    public void clear() {
         SQLiteDatabase dbw = this.getWritableDatabase();
         uninstallDB(dbw);
         installDB(dbw);
     }
 
-    private String statementForTableCardsCreation(){
+    private String statementForTableCardsCreation() {
         String strRet;
 
         strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
@@ -361,7 +435,7 @@ public class CardDB extends SQLiteOpenHelper {
         return strRet;
     }
 
-    private String statementForCollectionsCreation(){
+    private String statementForCollectionsCreation() {
         String strRet;
 
         strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
@@ -371,7 +445,7 @@ public class CardDB extends SQLiteOpenHelper {
         return strRet;
     }
 
-    private String statementForCardsInCollectionsCreation(){
+    private String statementForCardsInCollectionsCreation() {
         String strRet;
 
         strRet = String.format("CREATE TABLE IF NOT EXISTS %s " +
@@ -381,15 +455,15 @@ public class CardDB extends SQLiteOpenHelper {
         return strRet;
     }
 
-    private String statementForTableCardsDestruction(){
+    private String statementForTableCardsDestruction() {
         return "DROP TABLE IF EXISTS " + TABLE_CARDS;
     }
 
-    private String statementForTableCollectionDestruction(){
+    private String statementForTableCollectionDestruction() {
         return "DROP TABLE IF EXISTS " + TABLE_COLLECTIONS;
     }
 
-    private String statementForTableCardsInCollectionDestruction(){
+    private String statementForTableCardsInCollectionDestruction() {
         return "DROP TABLE IF EXISTS " + TABLE_CARDS_IN_COLLECTION;
     }
 

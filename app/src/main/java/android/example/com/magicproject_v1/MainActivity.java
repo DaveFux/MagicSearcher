@@ -10,7 +10,9 @@ import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -32,7 +34,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import static android.support.design.widget.Snackbar.make;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     protected FrameLayout progressBarHolder;
     protected Toolbar mToolbar;
     protected NavigationView mNavigationView;
+    protected CoordinatorLayout mCoordinatorLayout;
+
+    private boolean mSortByNumberOfCards = false;
+    private boolean mSortByName = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
                 Bundle b = new Bundle();
                 b.putString("collectionName", collectionListArray.get(position).getName());
-                b.putInt("collectionId", position + 1);
+                System.out.println(collectionListArray.get(position).getId());
+                b.putInt("collectionId", collectionListArray.get(position).getId());
                 intent.putExtras(b);
                 startActivity(intent);
             });
@@ -143,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
                     if (bName != null && bTags != null) {
                         Collection c = new Collection(bName, bTags);
                         mDb.addCollection(c);
+                        collectionListArray.clear();
+                        collectionListArray.addAll(mDb.retrieveAllCollections());
+                        itemsAdapter.notifyDataSetChanged();
                     }
                 } else {
                     int bCollectionId = newCollectionBundle.getInt("collectionId");
@@ -170,10 +183,11 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.idToolbar);
         collectionListView = findViewById(R.id.idCollectionList);
         mNavigationView = findViewById(R.id.idNavigationView);
+        mCoordinatorLayout = findViewById(R.id.idCoordinatorLayout);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
 
         Object[] objects = {mContext, mDb, progressBarHolder, mDrawerLayout,
-                mToolbar, collectionListView, mNavigationView, itemsAdapter};
+                mToolbar, collectionListView, mNavigationView, mCoordinatorLayout, itemsAdapter};
 
         for (Object o : objects) {
             if (o == null) return false;
@@ -185,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = this.getMenuInflater();
         mi.inflate(R.menu.menu_search, menu);
+        mi.inflate(R.menu.menu_collections, menu);
         MenuItem item = menu.findItem(R.id.idMenuItemCardSearch);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -230,6 +245,28 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.idMenuSortName:
+                collectionListArray.sort((o1, o2) -> {
+                    if(mSortByName){
+                        return o2.getName().compareTo(o1.getName());
+                    } else {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                mSortByName = !mSortByName;
+                itemsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.idMenuSortNumberOfCards:
+                collectionListArray.sort((o1, o2) -> {
+                    if(mSortByNumberOfCards){
+                        return Integer.compare(o1.getNumberOfCards(), o2.getNumberOfCards());
+                    } else {
+                        return Integer.compare(o2.getNumberOfCards(), o1.getNumberOfCards());
+                    }
+                });
+                mSortByNumberOfCards = !mSortByNumberOfCards;
+                itemsAdapter.notifyDataSetChanged();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -243,20 +280,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int collectionId = collectionListArray.get(info.position).getId();
         switch (item.getItemId()) {
             case R.id.idContextItemDeleteCollection:
+                String collectionName = collectionListArray.get(info.position).getName();
                 collectionListArray.remove(info.position);
+                mDb.deleteCollection(collectionId);
                 itemsAdapter.notifyDataSetChanged();
-                Toast.makeText(mContext, "Item deleted", Toast.LENGTH_SHORT).show();
+                Snackbar itemDeletedSnackbar = make(mCoordinatorLayout,
+                        "Deleted collection " + collectionName,
+                        Snackbar.LENGTH_LONG);
+                itemDeletedSnackbar.show();
+                return true;
+            case R.id.idContextItemDeleteAllCollection:
+                collectionListArray.clear();
+                mDb.deleteAllCollections();
+                itemsAdapter.notifyDataSetChanged();
+                Snackbar deletedAllSnackbar = make(mCoordinatorLayout,
+                        "Deleted all collections",
+                        Snackbar.LENGTH_LONG);
+                deletedAllSnackbar.show();
                 return true;
             case R.id.idContextItemEditCollection:
                 Intent intent = new Intent(MainActivity.this, NewCollectionActivity.class);
                 Bundle b = new Bundle();
-                b.putInt("collectionId", info.position + 1);
+                b.putInt("collectionId", collectionId);
                 b.putString("collectionName", collectionListArray.get(info.position).getName());
                 b.putString("collectionTags", collectionListArray.get(info.position).getTags());
                 intent.putExtras(b);
                 startActivity(intent);
+                return true;
+            case R.id.idContextItemClearCollection:
+                mDb.deleteAllCardsFromCollection(collectionId);
+                collectionListArray.clear();
+                collectionListArray.addAll(mDb.retrieveAllCollections());
+                itemsAdapter.notifyDataSetChanged();
+                Snackbar clearedSnackbar = make(mCoordinatorLayout,
+                        "Cleared all items in collection " + collectionListArray.get(info.position).getName(),
+                        Snackbar.LENGTH_LONG);
+                clearedSnackbar.show();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -283,17 +345,12 @@ public class MainActivity extends AppCompatActivity {
                 JSONParser jp = new JSONParser();
                 if (size > 0) {
                     List<Card> cards = new ArrayList<>(jp.readJsonStream(json));
-                    List<String> tags = new ArrayList<>();
-                    tags.add("Aggro");
-                    tags.add("Budget");
-                    mDb.addCollection(new Collection("SUPA COLLECTION 1", tags, cards));
                     for (Card card : cards) {
                         mDb.addCard(card);
                     }
                 } else {
                     //log
                 }
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

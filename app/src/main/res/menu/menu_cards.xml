@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/idMenuSortName"
+        android:title="@string/strSortName"/>
+
+    <item
+        android:id="@+id/idMenuSortType"
+        android:title="@string/strSortType"/>
+
+    <item
+        android:id="@+id/idMenuSortManaCost"
+        android:title="@string/strSortManaCost"/>
+
+    <item
+        android:id="@+id/idMenuSortPower"
+        android:title="@string/strSortPower"/>
+
+    <item
+        android:id="@+id/idMenuSortToughness"
+        android:title="@string/strSortToughness"/>
+</menu>
