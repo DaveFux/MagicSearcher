@@ -55,4 +55,6 @@
     <string name="strSortToughness">Sort by toughness</string>
     <string name="strMenuSortNumberOfCards">Sort by number of cards</string>
     <string name="strClearCollections">Clear collection</string>
+    <string name="strMenuSimplifiedView">Simplified view</string>
+    <string name="strMenuNormalView">Normal view</string>
 </resources>
