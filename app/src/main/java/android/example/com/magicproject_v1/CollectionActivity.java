@@ -418,7 +418,11 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         String cardName = cardListArray.get(info.position).getName();
+        DuplicatesList nl = filterResults();
         String cardId = cardListArray.get(info.position).getId();
+        if(mSimplifiedView){
+            cardId = nl.getList().get(info.position).getId();
+        }
         int realCollectionID = bundle.getInt("collectionId");
         switch (item.getItemId()) {
             case R.id.idContextItemAddToCollection:
@@ -427,7 +431,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 View viewInflated = LayoutInflater.from(mContext).inflate(R.layout.input_dialog, mCardListView, false);
                 final EditText input = viewInflated.findViewById(R.id.idUserInput);
                 mSpinner = viewInflated.findViewById(R.id.idCollectionSpinner);
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>
                         (this, android.R.layout.simple_spinner_item,
                                 collectionsName); //selected item will look like a mSpinner set from XML
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout
@@ -439,6 +443,10 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        String cardId = cardListArray.get(info.position).getId();
+                        if(mSimplifiedView){
+                            cardId = nl.getList().get(info.position).getId();
+                        }
                         int mNumberOfCards = Integer.parseInt(input.getText().toString());
                         int collectionIDInSpinner = collections.get(mSpinner.getSelectedItemPosition()).getId();
                         mDb.addCardInCollection(cardId, collectionIDInSpinner, mNumberOfCards);
@@ -496,7 +504,17 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 mDb.deleteAllCardsFromCollection(cardId, realCollectionID);
                 cardListArray.clear();
                 cardListArray.addAll(mDb.retrieveAllCardsInCollection(realCollectionID));
-                itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
+                if(mSimplifiedView){
+                    DuplicatesList d = filterResults();
+                    itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), true);
+                }else{
+                   DuplicatesList d = new DuplicatesList();
+                    for (Card card : cardListArray) {
+                        d.getList().add(card);
+                        d.getDuplicates().add(1);
+                    }
+                    itemsAdapter = new CardsArrayAdapter(mContext, d, false);
+                }
                 mCardListView.setAdapter(itemsAdapter);
                 Snackbar deletedAllSnackbar = make(mCoordinatorLayout,
                         "Deleted all " + cardName + " from this collection",
