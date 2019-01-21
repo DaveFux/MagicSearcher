@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 b.putString("collectionName", collectionListArray.get(position).getName());
                 System.out.println(collectionListArray.get(position).getId());
                 b.putInt("collectionId", collectionListArray.get(position).getId());
+                System.out.println( collectionListArray.get(position).getId());
                 intent.putExtras(b);
                 startActivity(intent);
             });

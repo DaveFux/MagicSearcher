@@ -58,7 +58,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     protected NavigationView mNavigationView;
     protected CoordinatorLayout mCoordinatorLayout;
 
-    private boolean mSimplifiedView = false;
+    private boolean mSimplifiedView = true;
     private boolean mAllowDuplicates = true;
     private boolean mSortByName = false;
     private boolean mSortByType = false;
@@ -419,7 +419,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         String cardName = cardListArray.get(info.position).getName();
         String cardId = cardListArray.get(info.position).getId();
-        int realCollectionID = bundle.getInt("collectionID");
+        int realCollectionID = bundle.getInt("collectionId");
         switch (item.getItemId()) {
             case R.id.idContextItemAddToCollection:
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -467,16 +467,30 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 builder.show();
                 return true;
             case R.id.idContextItemDeleteOneFromCollection:
-                /*ArrayList<Card> cardsUpdated = mDb.retrieveAllCardsInCollection(cardId, collectionID);
-                mDb.deleteOneCardFromCollection(cardId, collectionID, cardsUpdated.size() - 1);
-                cardListArray.clear();
-                cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionID));
-                itemsAdapter = new CardsArrayAdapter(mContext, cardListArray, mAllowDuplicates);
-                mCardListView.setAdapter(itemsAdapter);
-                Snackbar deletedOneSnackbar = make(mCoordinatorLayout,
-                        "Deleted 1 " + cardName + " from this collection",
-                        Snackbar.LENGTH_LONG);
-                deletedOneSnackbar.show();*/
+                if (mSimplifiedView) {
+                    Snackbar estaNaSimplifiedView = make(mCoordinatorLayout,
+                            "You must leave Simplified View to delete cards.",
+                            Snackbar.LENGTH_LONG);
+                    estaNaSimplifiedView.show();
+                } else {
+                    ArrayList<Card> cardsUpdated = mDb.retrieveAllCardsInCollection(cardId, realCollectionID);
+                    mDb.deleteOneCardFromCollection(cardId, realCollectionID, cardsUpdated.size() - 1);
+                    cardListArray.clear();
+                    cardListArray.addAll(mDb.retrieveAllCardsInCollection(realCollectionID));
+                    DuplicatesList normalList = new DuplicatesList();
+                    normalList.getList().clear();
+                    normalList.getDuplicates().clear();
+                    for (Card card : cardListArray) {
+                        normalList.getList().add(card);
+                        normalList.getDuplicates().add(1);
+                    }
+                    itemsAdapter = new CardsArrayAdapter(mContext, normalList, false);
+                    mCardListView.setAdapter(itemsAdapter);
+                    Snackbar deletedOneSnackbar = make(mCoordinatorLayout,
+                            "Deleted 1 " + cardName + " from this collection",
+                            Snackbar.LENGTH_LONG);
+                    deletedOneSnackbar.show();
+                }
                 return true;
             case R.id.idContextItemDeleteAllFromCollection:
                 mDb.deleteAllCardsFromCollection(cardId, realCollectionID);

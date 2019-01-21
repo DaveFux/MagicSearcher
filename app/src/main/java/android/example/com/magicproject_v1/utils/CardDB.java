@@ -131,7 +131,7 @@ public class CardDB extends SQLiteOpenHelper {
         return -2;
     }
 
-    // NOT COMPLETED
+    // COMPLETED
     public long editCollection(int id, String name, String tags) {
         SQLiteDatabase dbw = this.getWritableDatabase();
         if (dbw != null) {
@@ -209,6 +209,8 @@ public class CardDB extends SQLiteOpenHelper {
                 cv.put(COL_QUANTITY, quantity);
                 int rows = dbw.update(TABLE_CARDS_IN_COLLECTION, cv, COL_ID_COLLECTIONS + " = " + collectionID +
                         " and " + COL_ID_CARDS + " like '%" + cardID + "%'", null);
+                System.out.println(COL_ID_COLLECTIONS + " = " + collectionID +
+                        " and " + COL_ID_CARDS + " like '%" + cardID + "%'");
                 System.out.println(rows);
             } else {
                 deleteAllCardsFromCollection(cardID, collectionID);
