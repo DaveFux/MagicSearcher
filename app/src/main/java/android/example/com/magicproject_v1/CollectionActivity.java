@@ -499,22 +499,25 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 int collectionId = bundle.getInt("collectionId");
                 if (showAllCards) {
                     cardListArray.addAll(mDb.retrieveCards());
-                    DuplicatesList duplicatesList = new DuplicatesList();
-                    for (Card card : cardListArray) {
-                        duplicatesList.getList().add(card);
-                        duplicatesList.getDuplicates().add(1);
-                    }
-                    itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
+//                    DuplicatesList duplicatesList = new DuplicatesList();
+//                    for (Card card : cardListArray) {
+//                        duplicatesList.getList().add(card);
+//                        duplicatesList.getDuplicates().add(1);
+//                    }
+//                    itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
                 } else {
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
-                    itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
+                    allCards.addAll(cardListArray);
+                    DuplicatesList dl = filterResults();
+                    itemsAdapter = new CardsArrayAdapter(mContext, dl, mAllowDuplicates);
+                    return null;
                 }
-                /*DuplicatesList duplicatesList = new DuplicatesList();
+                DuplicatesList duplicatesList = new DuplicatesList();
                 for (Card card : cardListArray) {
                     duplicatesList.getList().add(card);
                     duplicatesList.getDuplicates().add(1);
                 }
-                itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);*/
+                itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
             }
             return null;
         }
