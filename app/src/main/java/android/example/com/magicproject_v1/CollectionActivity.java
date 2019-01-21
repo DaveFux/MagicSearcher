@@ -499,11 +499,22 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 int collectionId = bundle.getInt("collectionId");
                 if (showAllCards) {
                     cardListArray.addAll(mDb.retrieveCards());
+                    DuplicatesList duplicatesList = new DuplicatesList();
+                    for (Card card : cardListArray) {
+                        duplicatesList.getList().add(card);
+                        duplicatesList.getDuplicates().add(1);
+                    }
+                    itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
                 } else {
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
+                    itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
                 }
-                allCards.addAll(cardListArray);
-                itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
+                /*DuplicatesList duplicatesList = new DuplicatesList();
+                for (Card card : cardListArray) {
+                    duplicatesList.getList().add(card);
+                    duplicatesList.getDuplicates().add(1);
+                }
+                itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);*/
             }
             return null;
         }
@@ -525,7 +536,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 retorno.getDuplicates().add(1);
             }
         }
-        System.out.println(retorno.getList().size());
         return retorno;
     }
 }
