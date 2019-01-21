@@ -28,13 +28,11 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static android.support.design.widget.Snackbar.make;
@@ -210,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                collectionListArray.clear();
                 String str = newText.toLowerCase();
                 if (str.contains(":")) {
                     collectionListArray.clear();
@@ -372,6 +371,5 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("first_run", false);
             editor.apply();
         }
-
     }
 }

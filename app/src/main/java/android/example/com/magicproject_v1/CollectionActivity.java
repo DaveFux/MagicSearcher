@@ -58,6 +58,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     protected NavigationView mNavigationView;
     protected CoordinatorLayout mCoordinatorLayout;
 
+    private boolean mSimplifiedView = false;
     private boolean mAllowDuplicates = true;
     private boolean mSortByName = false;
     private boolean mSortByType = false;
@@ -153,7 +154,12 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 mCardListView.setOnItemClickListener((parent, view, position, id) -> {
                     Intent intent = new Intent(CollectionActivity.this, CardViewActivity.class);
                     Bundle b = new Bundle();
-                    b.putString("image", cardListArray.get(position).getImage());
+                    if(mSimplifiedView){
+                        DuplicatesList dl = filterResults();
+                        b.putString("image", dl.getList().get(position).getImage());
+                    }else{
+                        b.putString("image", cardListArray.get(position).getImage());
+                    }
                     intent.putExtras(b);
                     startActivity(intent);
                 });
@@ -312,10 +318,27 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        DuplicatesList simplifiedList = new DuplicatesList();
+        DuplicatesList normalList = new DuplicatesList();
+        if (mSimplifiedView){
+            simplifiedList = filterResults();
+        }else{
+            normalList = new DuplicatesList();
+            for (Card card : cardListArray) {
+                normalList.getList().add(card);
+                normalList.getDuplicates().add(1);
+            }
+        }
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            case R.id.idMenuNormalView:
+                mSimplifiedView = false;
+                break;
+            case R.id.idMenuSimplifiedView:
+                mSimplifiedView = true;
+                break;
             case R.id.idMenuSortName:
                 cardListArray.sort((o1, o2) -> {
                     if(mSortByName){
@@ -325,7 +348,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     }
                 });
                 mSortByName = !mSortByName;
-                itemsAdapter.notifyDataSetChanged();
                 break;
             case R.id.idMenuSortType:
                 cardListArray.sort((o1, o2) -> {
@@ -336,7 +358,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     }
                 });
                 mSortByType = !mSortByType;
-                itemsAdapter.notifyDataSetChanged();
                 break;
             case R.id.idMenuSortManaCost:
                 cardListArray.sort((o1, o2) -> {
@@ -347,7 +368,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     }
                 });
                 mSortByManaCost = !mSortByManaCost;
-                itemsAdapter.notifyDataSetChanged();
                 break;
             case R.id.idMenuSortPower:
                 cardListArray.sort((o1, o2) -> {
@@ -358,7 +378,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     }
                 });
                 mSortByPower = !mSortByPower;
-                itemsAdapter.notifyDataSetChanged();
                 break;
             case R.id.idMenuSortToughness:
                 cardListArray.sort((o1, o2) -> {
@@ -369,10 +388,23 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     }
                 });
                 mSortByToughness = !mSortByToughness;
-                itemsAdapter.notifyDataSetChanged();
                 break;
-
         }
+        if(mSimplifiedView){
+            simplifiedList.getList().clear();
+            simplifiedList.getDuplicates().clear();
+            simplifiedList = filterResults();
+            itemsAdapter = new CardsArrayAdapter(mContext, simplifiedList, true);
+        } else {
+            normalList.getList().clear();
+            normalList.getDuplicates().clear();
+            for (Card card : cardListArray) {
+                normalList.getList().add(card);
+                normalList.getDuplicates().add(1);
+            }
+            itemsAdapter = new CardsArrayAdapter(mContext, normalList, false);
+        }
+        mCardListView.setAdapter(itemsAdapter);
         return super.onOptionsItemSelected(item);
     }
 
@@ -402,6 +434,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         .simple_spinner_dropdown_item);
                 mSpinner.setAdapter(spinnerArrayAdapter);
                 builder.setView(viewInflated);
+
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -424,6 +457,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         addCardsSnackbar.show();
                     }
                 });
+
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -499,25 +533,16 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 int collectionId = bundle.getInt("collectionId");
                 if (showAllCards) {
                     cardListArray.addAll(mDb.retrieveCards());
-//                    DuplicatesList duplicatesList = new DuplicatesList();
-//                    for (Card card : cardListArray) {
-//                        duplicatesList.getList().add(card);
-//                        duplicatesList.getDuplicates().add(1);
-//                    }
-//                    itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
+                    DuplicatesList duplicatesList = new DuplicatesList();
+                    for (Card card : cardListArray) {
+                        duplicatesList.getList().add(card);
+                        duplicatesList.getDuplicates().add(1);
+                    }
+                    itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
                 } else {
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
-                    allCards.addAll(cardListArray);
-                    DuplicatesList dl = filterResults();
-                    itemsAdapter = new CardsArrayAdapter(mContext, dl, mAllowDuplicates);
-                    return null;
+                    itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
                 }
-                DuplicatesList duplicatesList = new DuplicatesList();
-                for (Card card : cardListArray) {
-                    duplicatesList.getList().add(card);
-                    duplicatesList.getDuplicates().add(1);
-                }
-                itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);
             }
             return null;
         }
