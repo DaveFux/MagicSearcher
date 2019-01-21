@@ -4,13 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.example.com.magicproject_v1.classes.Card;
+import android.example.com.magicproject_v1.utils.BuildDatabase;
 import android.example.com.magicproject_v1.utils.CardDB;
-import android.example.com.magicproject_v1.utils.JSONParser;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -18,13 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.Switch;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.support.design.widget.Snackbar.make;
 
@@ -36,6 +34,9 @@ public class SettingsActivity extends AppCompatActivity {
     protected Context mContext;
     protected Toolbar mToolbar;
     protected NavigationView mNavigationView;
+    protected AlphaAnimation inAnimation;
+    protected AlphaAnimation outAnimation;
+    protected FrameLayout mProgressBarHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +133,10 @@ public class SettingsActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.idToolbar);
         mNavigationView = findViewById(R.id.idNavigationView);
         mCoordinatorLayout = findViewById(R.id.idCoordinatorLayout);
-        Object[] objects = {mContext, mDb, mDrawerLayout, mToolbar,  mNavigationView, mCoordinatorLayout};
+        mProgressBarHolder = findViewById(R.id.idProgressBarHolder);
+
+        Object[] objects = {mContext, mDb, mDrawerLayout, mToolbar,  mNavigationView,
+                mCoordinatorLayout, mProgressBarHolder};
 
         for (Object o : objects) {
             if (o == null) return false;
@@ -149,33 +153,19 @@ public class SettingsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     public void reinstalldb(View view){
         mDb.clear();
-        String msg="";
+        InputStream json = null;
         try {
-            InputStream json = mContext.getAssets().open("cards.json");
-            int size = json.available();
-            JSONParser jp = new JSONParser();
-            if (size > 0) {
-                List<Card> cards = new ArrayList<>(jp.readJsonStream(json));
-                for (Card card : cards) {
-                    mDb.addCard(card);
-
-                }
-                msg = "Reinstalled Database";
-
-            } else {
-                msg = "Nothing to reinstall";
-
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            msg = "Error:Cannot find Json File";
+            json = mContext.getAssets().open("cards.json");
         } catch (IOException e) {
             e.printStackTrace();
-            msg = "Error: Cannot open file";
         }
-        Snackbar reinstallSnackbar = make(mCoordinatorLayout, msg, Snackbar.LENGTH_LONG);
-        reinstallSnackbar.show();
+        new BuildDatabase(SettingsActivity.this).execute(json);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("first_run", false);
+        editor.apply();
     }
 }
