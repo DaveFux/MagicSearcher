@@ -11,23 +11,23 @@
         \nO objetivo desta app é fornecer uma plataforma fácil para guardar e aceder a informação sobre o jogo de cartas Magic The Gathering</string>
     <string name="HowMainText">
         \tEsta app pode ser usada de varias maneiras.
-        \n\tO search tem vários metodos para ser usado:\n\n
+        \n\tO search tem vários metodos para ser usado:\n
         \n\t\t Em todas as views:
         \n\t\t\t -tem search por nome;\n
         \n\t\t Só nas coleções:
         \n\t\t\t -tem search por tag nas coleções:
-        \n\t\t\t\t tags:\"tag da coleção\";\n\n
+        \n\t\t\t\t tags:\"tag da coleção\";\n
         \n\t\t Só nas cartas:
         \n\t\t\t -tem search por type das cartas:
         \n\t\t\t\t type:\"type da carta\";\n
-        \n\t\t\t -tem search pelo Custo das carta:
+        \n\t\t\t -tem search pelo mana cost das carta:
         \n\t\t\t\t mc:\"Mana cost da carta\";\n
         \n\t\t\t -tem search pelo nome da expansão das cartas:
-        \n\t\t\t\t exp:\"Mana cost da carta\";\n
-        \n\t\t\t -tem search pelo nome da poder das cartas:
-        \n\t\t\t\t power:\"Mana cost da carta\";\n
-        \n\t\t\t -tem search pelo nome da defesa das cartas:
-        \n\t\t\t\t tgh:"Mana cost da carta";\n
+        \n\t\t\t\t exp:\"expansão da carta\";\n
+        \n\t\t\t -tem search pelo poder das cartas:
+        \n\t\t\t\t power:\"poder da carta\";\n
+        \n\t\t\t -tem search pela defesa das cartas:
+        \n\t\t\t\t tgh:"defesa da carta";\n
         \n</string>
     <string name="AboutAutores">Desenvolvida por: \n\tBruno Ferreira - 150118025 \n\tDavid Silva - 160118000 \n\tPaulo Pimenta - 160118000 \n\tAndré Alves - 160118008</string>
     <string name="strRandomCard">Random card</string>

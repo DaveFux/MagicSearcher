@@ -17,14 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.widget.FrameLayout;
 import android.widget.Switch;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import static android.support.design.widget.Snackbar.make;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -34,9 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
     protected Context mContext;
     protected Toolbar mToolbar;
     protected NavigationView mNavigationView;
-    protected AlphaAnimation inAnimation;
-    protected AlphaAnimation outAnimation;
-    protected FrameLayout mProgressBarHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +126,9 @@ public class SettingsActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.idToolbar);
         mNavigationView = findViewById(R.id.idNavigationView);
         mCoordinatorLayout = findViewById(R.id.idCoordinatorLayout);
-        mProgressBarHolder = findViewById(R.id.idProgressBarHolder);
 
         Object[] objects = {mContext, mDb, mDrawerLayout, mToolbar,  mNavigationView,
-                mCoordinatorLayout, mProgressBarHolder};
+                mCoordinatorLayout};
 
         for (Object o : objects) {
             if (o == null) return false;

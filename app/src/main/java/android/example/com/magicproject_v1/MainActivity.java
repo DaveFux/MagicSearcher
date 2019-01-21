@@ -22,9 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -43,9 +41,6 @@ public class MainActivity extends AppCompatActivity {
     protected ListView collectionListView;
     protected CardDB mDb;
     protected DrawerLayout mDrawerLayout;
-    protected AlphaAnimation inAnimation;
-    protected AlphaAnimation outAnimation;
-    protected FrameLayout mProgressBarHolder;
     protected Toolbar mToolbar;
     protected NavigationView mNavigationView;
     protected CoordinatorLayout mCoordinatorLayout;
@@ -144,9 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
                 Bundle b = new Bundle();
                 b.putString("collectionName", collectionListArray.get(position).getName());
-                System.out.println(collectionListArray.get(position).getId());
                 b.putInt("collectionId", collectionListArray.get(position).getId());
-                System.out.println( collectionListArray.get(position).getId());
                 intent.putExtras(b);
                 startActivity(intent);
             });
@@ -185,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean initDataMembers() {
         mContext = this;
         mDb = new CardDB(mContext);
-        mProgressBarHolder = findViewById(R.id.idProgressBarHolder);
         mDrawerLayout = findViewById(R.id.idDrawerLayout);
         mToolbar = findViewById(R.id.idToolbar);
         collectionListView = findViewById(R.id.idCollectionList);
@@ -193,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
         mCoordinatorLayout = findViewById(R.id.idCoordinatorLayout);
         itemsAdapter = new CollectionsArrayAdapter(mContext, collectionListArray);
 
-        Object[] objects = {mContext, mDb, mProgressBarHolder, mDrawerLayout,
-                mToolbar, collectionListView, mNavigationView, mCoordinatorLayout, itemsAdapter};
+        Object[] objects = {mContext, mDb, mDrawerLayout, mToolbar, collectionListView,
+                mNavigationView, mCoordinatorLayout, itemsAdapter};
 
         for (Object o : objects) {
             if (o == null) return false;

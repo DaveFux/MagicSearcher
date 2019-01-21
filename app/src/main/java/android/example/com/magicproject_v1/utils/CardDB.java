@@ -121,7 +121,6 @@ public class CardDB extends SQLiteOpenHelper {
             cv.put(COL_NAME, collection.getName());
             cv.put(COL_TAGS, collection.getTags());
             long id = dbw.insert(TABLE_COLLECTIONS, null, cv);
-            System.out.println(id);
             dbw.close();
             for (Card c : collection.getCards()) {
                 addCardInCollection(c.getId(), (int) id);
@@ -209,9 +208,6 @@ public class CardDB extends SQLiteOpenHelper {
                 cv.put(COL_QUANTITY, quantity);
                 int rows = dbw.update(TABLE_CARDS_IN_COLLECTION, cv, COL_ID_COLLECTIONS + " = " + collectionID +
                         " and " + COL_ID_CARDS + " like '%" + cardID + "%'", null);
-                System.out.println(COL_ID_COLLECTIONS + " = " + collectionID +
-                        " and " + COL_ID_CARDS + " like '%" + cardID + "%'");
-                System.out.println(rows);
             } else {
                 deleteAllCardsFromCollection(cardID, collectionID);
             }
@@ -224,7 +220,6 @@ public class CardDB extends SQLiteOpenHelper {
         if (dbw != null) {
             String query = "delete from " + TABLE_CARDS_IN_COLLECTION + " where "
                     + COL_ID_COLLECTIONS + " = " + collectionID + " and " + COL_ID_CARDS + " like '%" + cardID + "%'";
-            System.out.println(query);
             dbw.execSQL(query);
             dbw.close();
         }

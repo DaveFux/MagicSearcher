@@ -445,7 +445,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                             }
                             int mNumberOfCards = Integer.parseInt(input.getText().toString());
                             int collectionIDInSpinner = collections.get(mSpinner.getSelectedItemPosition()).getId();
-                            System.out.println(mSpinner.getSelectedItemPosition());
                             mDb.addCardInCollection(cardId, collectionIDInSpinner, mNumberOfCards);
                             if (bundle.getString("collectionName") != null) {
                                 cardListArray.clear();
@@ -575,11 +574,8 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 if (showAllCards) {
                     cardListArray.addAll(mDb.retrieveCards());
                 } else {
-                    System.out.println("ANTES: " + cardListArray.size());
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
-                    System.out.println("DEPOIS: " + cardListArray.size());
                 }
-                System.out.println(cardListArray.size());
                 allCards.addAll(cardListArray);
                 DuplicatesList duplicatesList = new DuplicatesList();
                 if(mSimplifiedView){
