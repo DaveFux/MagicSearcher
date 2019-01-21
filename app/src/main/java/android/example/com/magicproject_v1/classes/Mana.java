@@ -155,19 +155,19 @@ public class Mana implements Comparable<Mana> {
         StringBuilder sb = new StringBuilder();
         if(this.colorless > 0) sb.append(this.colorless);
         for (int i = 0; i < this.red; i++) {
-            sb.append("R");
+            sb.append(ManaType.RED.getAbv());
         }
         for (int h = 0; h < this.green; h++) {
-            sb.append("G");
+            sb.append(ManaType.GREEN.getAbv());
         }
         for (int g = 0; g < this.blue; g++) {
-            sb.append("U");
+            sb.append(ManaType.BLUE.getAbv());
         }
         for (int j = 0; j < this.black; j++) {
-            sb.append("B");
+            sb.append(ManaType.BLACK.getAbv());
         }
         for (int k = 0; k < this.white; k++) {
-            sb.append("W");
+            sb.append(ManaType.WHITE.getAbv());
         }
         return sb.toString();
     }

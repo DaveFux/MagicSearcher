@@ -434,6 +434,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         .simple_spinner_dropdown_item);
                 mSpinner.setAdapter(spinnerArrayAdapter);
                 builder.setView(viewInflated);
+
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -456,6 +457,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                         addCardsSnackbar.show();
                     }
                 });
+
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -541,12 +543,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                     cardListArray.addAll(mDb.retrieveAllCardsInCollection(collectionId));
                     itemsAdapter = new CardsArrayAdapter(mContext, filterResults(), mAllowDuplicates);
                 }
-                /*DuplicatesList duplicatesList = new DuplicatesList();
-                for (Card card : cardListArray) {
-                    duplicatesList.getList().add(card);
-                    duplicatesList.getDuplicates().add(1);
-                }
-                itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mAllowDuplicates);*/
             }
             return null;
         }
