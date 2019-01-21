@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class parseInformation extends AsyncTask<Void, Void, Void> {
+    public class parseInformation extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {

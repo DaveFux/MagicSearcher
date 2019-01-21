@@ -87,8 +87,37 @@
                     android:layout_marginEnd="20dp"
                     android:checked="true" />
             </RelativeLayout>
-        </RelativeLayout>
 
+        <RelativeLayout
+                android:id="@+id/idResetLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/idManaCostLL">
+                <TextView
+                    android:id="@+id/idResetDatabase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/resetBtn"
+                    android:onClick="reinstalldb"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="#000"
+                    />
+            </RelativeLayout>
+
+        </RelativeLayout>
+        <android.support.design.widget.CoordinatorLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/idCoordinatorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
+
+        </android.support.design.widget.CoordinatorLayout>
         <android.support.design.widget.NavigationView
             android:id="@+id/idNavigationView"
             android:layout_width="wrap_content"

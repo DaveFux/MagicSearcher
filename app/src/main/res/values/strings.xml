@@ -57,4 +57,5 @@
     <string name="strClearCollections">Clear collection</string>
     <string name="strMenuSimplifiedView">Simplified view</string>
     <string name="strMenuNormalView">Normal view</string>
+    <string name="resetBtn">Reset Database</string>
 </resources>
