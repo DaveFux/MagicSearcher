@@ -31,6 +31,9 @@ public class SettingsActivity extends AppCompatActivity {
     protected Toolbar mToolbar;
     protected NavigationView mNavigationView;
 
+    protected Switch mThumbnailSwitch;
+    protected Switch mManaCostSwitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,24 +46,21 @@ public class SettingsActivity extends AppCompatActivity {
         boolean bDataMembersInitialized = initDataMembers();
 
         if (bDataMembersInitialized) {
-
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-            Switch thumbnailSwitch = findViewById(R.id.idSwitchThumbnails);
-            thumbnailSwitch.setChecked(preferences.getBoolean("thumbnails", true));
-            thumbnailSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+            mThumbnailSwitch.setChecked(preferences.getBoolean("thumbnails", true));
+            mThumbnailSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("thumbnails", isChecked);
                 editor.apply();
             });
 
-            Switch manaCostSwitch = findViewById(R.id.idSwitchManaCost);
-            manaCostSwitch.setChecked(preferences.getBoolean("manaCost", true));
-            manaCostSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            mManaCostSwitch.setChecked(preferences.getBoolean("manaCost", true));
+            mManaCostSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("manaCost", isChecked);
                 editor.apply();
             });
-
 
             setSupportActionBar(mToolbar);
             ActionBar actionbar = getSupportActionBar();
@@ -126,6 +126,8 @@ public class SettingsActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.idToolbar);
         mNavigationView = findViewById(R.id.idNavigationView);
         mCoordinatorLayout = findViewById(R.id.idCoordinatorLayout);
+        mThumbnailSwitch = findViewById(R.id.idSwitchThumbnails);
+        mManaCostSwitch = findViewById(R.id.idSwitchManaCost);
 
         Object[] objects = {mContext, mDb, mDrawerLayout, mToolbar,  mNavigationView,
                 mCoordinatorLayout};

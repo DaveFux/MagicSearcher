@@ -388,7 +388,7 @@ public class CardDB extends SQLiteOpenHelper {
         ArrayList<Card> retorno = new ArrayList<>();
         SQLiteDatabase dbr = this.getReadableDatabase();
         if (dbr != null) {
-            String query = "select * from " + TABLE_CARDS + " limit " + 50;
+            String query = "select * from " + TABLE_CARDS + " order by random() limit " + 50;
             if (columnName.length() > 0) {
                 query += " where " + columnName + " like '%" + filter + "%'";
             }
