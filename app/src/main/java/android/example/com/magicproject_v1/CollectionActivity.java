@@ -1,6 +1,7 @@
 package android.example.com.magicproject_v1;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,9 +49,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     protected ListView mCardListView;
     protected CardDB mDb;
     protected Bundle bundle;
-    protected AlphaAnimation inAnimation;
-    protected AlphaAnimation outAnimation;
-    protected FrameLayout mProgressBarHolder;
     protected DrawerLayout mDrawerLayout;
     protected ArrayList<Collection> collections;
     protected ArrayList<String> collectionsName = new ArrayList<>();
@@ -58,6 +56,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
     protected Toolbar mToolbar;
     protected NavigationView mNavigationView;
     protected CoordinatorLayout mCoordinatorLayout;
+    protected ProgressDialog mProgressDialog;
 
     private boolean mSimplifiedView = true;
     private boolean mSortByName = false;
@@ -174,13 +173,13 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         mContext = this;
         mDb = new CardDB(mContext);
         mCardListView = findViewById(R.id.idCardListView);
-        mProgressBarHolder = findViewById(R.id.idProgressBarHolder);
+        mProgressDialog = new ProgressDialog(this);
         mDrawerLayout = findViewById(R.id.idDrawerLayout);
         mToolbar = findViewById(R.id.idToolbar);
         mNavigationView = findViewById(R.id.idNavigationView);
         mCoordinatorLayout = findViewById(R.id.idCoordinatorLayout);
 
-        Object[] objects = {mContext, mDb, mCardListView, mProgressBarHolder, mDrawerLayout,
+        Object[] objects = {mContext, mDb, mCardListView, mProgressDialog, mDrawerLayout,
                 mToolbar, mNavigationView, mCoordinatorLayout};
 
         for (Object o : objects) {
@@ -200,6 +199,23 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                boolean showingAll = bundle.getBoolean("allCards");
+                if (showingAll) {
+                    cardListArray.clear();
+                    cardListArray.addAll(mDb.retrieveCards(query));
+
+                    DuplicatesList duplicatesList = new DuplicatesList();
+                    if(mSimplifiedView){
+                        duplicatesList = filterResults();
+                    } else {
+                        for (Card card : cardListArray) {
+                            duplicatesList.getList().add(card);
+                            duplicatesList.getDuplicates().add(1);
+                        }
+                    }
+                    itemsAdapter = new CardsArrayAdapter(mContext, duplicatesList, mSimplifiedView);
+                    mCardListView.setAdapter(itemsAdapter);
+                }
                 return false;
             }
 
@@ -318,7 +334,6 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                 return false;
             }
         });
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -551,19 +566,16 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            inAnimation = new AlphaAnimation(0f, 1f);
-            inAnimation.setDuration(200);
-            mProgressBarHolder.setAnimation(inAnimation);
-            mProgressBarHolder.setVisibility(View.VISIBLE);
+            mProgressDialog.setMessage("Loading cards..");
+            mProgressDialog.show();
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            outAnimation = new AlphaAnimation(1f, 0f);
-            outAnimation.setDuration(200);
-            mProgressBarHolder.setAnimation(outAnimation);
-            mProgressBarHolder.setVisibility(View.GONE);
+            if (mProgressDialog.isShowing()) {
+                mProgressDialog.dismiss();
+            }
             mCardListView.setAdapter(itemsAdapter);
         }
 

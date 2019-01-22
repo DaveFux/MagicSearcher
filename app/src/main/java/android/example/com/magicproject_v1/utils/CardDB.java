@@ -380,7 +380,27 @@ public class CardDB extends SQLiteOpenHelper {
 
     // COMPLETED
     public ArrayList<Card> retrieveCards(String filter) {
-        return retrieveCards(COL_NAME, filter);
+        ArrayList<Card> retorno = new ArrayList<>();
+        SQLiteDatabase dbr = this.getReadableDatabase();
+        if (dbr != null) {
+            String query = "select * from " + TABLE_CARDS + " where " + COL_NAME + " like '%"
+                    + filter + "%'" + " limit " + 50;
+            Cursor cursor = dbr.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    Card c = new Card(cursor.getString(0), cursor.getString(1),
+                            cursor.getString(2), cursor.getString(3), cursor.getString(4),
+                            cursor.getString(5), cursor.getString(6), cursor.getString(7),
+                            cursor.getInt(8), cursor.getInt(9), cursor.getString(10),
+                            cursor.getString(11));
+                    retorno.add(c);
+                    cursor.moveToNext();
+                }
+            }
+            dbr.close();
+            cursor.close();
+        }
+        return retorno;
     }
 
     // COMPLETED
