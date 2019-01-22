@@ -254,8 +254,9 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                                             }
                                             break;
                                         default:
+
                                             for (Card card : allCards) {
-                                                if (card.getPower() == Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                if (card.getPower() == Integer.parseInt(strAfterSplit[1])) {
                                                     cardListArray.add(card);
                                                 }
                                             }
@@ -286,7 +287,7 @@ public class CollectionActivity extends AppCompatActivity implements AdapterView
                                             break;
                                         default:
                                             for (Card card : allCards) {
-                                                if (card.getToughness() == Integer.parseInt(strAfterSplit[1].substring(1))) {
+                                                if (card.getToughness() == Integer.parseInt(strAfterSplit[1])) {
                                                     cardListArray.add(card);
                                                 }
                                             }
